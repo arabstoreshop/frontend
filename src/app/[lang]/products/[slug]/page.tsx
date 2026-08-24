@@ -26,22 +26,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductPage({ params }: { params: { slug: string, lang: "ar" | "en" } }) {
+export default function ProductPage({ params }: Props) {
   const product = getProductBySlug(params.slug);
   if (!product) notFound();
 
   const crossSells = getCrossells(product.sku);
-  const isEn = params.lang === "en";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-        <Link href={`/${params.lang}`} className="hover:text-brand transition-colors">{isEn ? "Home" : "الرئيسية"}</Link>
-        <ArrowRight className={`w-3.5 h-3.5 ${isEn ? "rotate-180" : ""}`} />
-        <Link href={`/${params.lang}/collection`} className="hover:text-brand transition-colors">{isEn ? "Products" : "المنتجات"}</Link>
-        <ArrowRight className={`w-3.5 h-3.5 ${isEn ? "rotate-180" : ""}`} />
-        <span className="text-gray-700 font-medium">{isEn && product.nameEn ? product.nameEn : product.name}</span>
+        <Link href="/" className="hover:text-brand transition-colors">الرئيسية</Link>
+        <ArrowRight className="w-3.5 h-3.5" />
+        <Link href="/collection" className="hover:text-brand transition-colors">المنتجات</Link>
+        <ArrowRight className="w-3.5 h-3.5" />
+        <span className="text-gray-700 font-medium">{product.name}</span>
       </nav>
 
       {/* Main product */}
@@ -51,7 +50,7 @@ export default async function ProductPage({ params }: { params: { slug: string, 
           <div className="relative aspect-square bg-cream rounded-3xl overflow-hidden">
             <Image
               src={product.image}
-              alt={isEn && product.nameEn ? product.nameEn : product.name}
+              alt={product.name}
               fill
               className="object-cover"
               priority
@@ -59,17 +58,17 @@ export default async function ProductPage({ params }: { params: { slug: string, 
             {product.sfdaApproved && (
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
                 <ShieldCheck className="w-4 h-4 text-green-600" />
-                <span className="text-xs font-bold text-gray-900">{isEn ? "SFDA Approved" : "مرخص SFDA"}</span>
+                <span className="text-xs font-bold text-gray-900">مرخص SFDA</span>
               </div>
             )}
           </div>
-          {product.images && product.images.length > 1 && (
+          {product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {product.images.map((img, i) => (
                 <div key={i} className="relative aspect-square bg-sand rounded-xl overflow-hidden border border-gray-100">
                   <Image
                     src={img}
-                    alt={`${isEn && product.nameEn ? product.nameEn : product.name} ${i + 1}`}
+                    alt={`${product.name} ${i + 1}`}
                     fill
                     className="object-cover"
                   />
@@ -83,10 +82,10 @@ export default async function ProductPage({ params }: { params: { slug: string, 
         <div className="space-y-6">
           <div>
             <span className="text-xs font-medium text-brand bg-brand-50 px-3 py-1 rounded-full">
-              {isEn && product.categoryEn ? product.categoryEn : product.category}
+              {product.category}
             </span>
             <h1 className="text-3xl font-bold text-gray-900 mt-3 leading-snug">
-              {isEn && product.nameEn ? product.nameEn : product.name}
+              {product.name}
             </h1>
             <div className="flex items-center gap-2 mt-2">
               <div className="flex text-amber-400">
@@ -94,17 +93,17 @@ export default async function ProductPage({ params }: { params: { slug: string, 
                   <Star key={i} className="w-4 h-4 fill-current" />
                 ))}
               </div>
-              <span className="text-sm text-gray-400 font-medium">{isEn ? "+480 Reviews" : "+480 تقييم من عملائنا"}</span>
+              <span className="text-sm text-gray-400 font-medium">+480 تقييم من عميلاتنا</span>
             </div>
           </div>
 
-          <p className="text-gray-600 leading-relaxed text-lg">{isEn && product.descriptionEn ? product.descriptionEn : product.description}</p>
+          <p className="text-gray-600 leading-relaxed text-lg">{product.description}</p>
 
           {/* Benefits */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-gray-900">{isEn ? "Why choose this product?" : "لماذا تختارين هذا المنتج؟"}</h3>
+            <h3 className="font-semibold text-gray-900">لماذا تختارين هذا المنتج؟</h3>
             <ul className="space-y-2.5">
-              {(isEn && product.benefitsEn ? product.benefitsEn : product.benefits).map((benefit, i) => (
+              {product.benefits.map((benefit, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm text-gray-700 font-medium">
                   <CheckCircle className="w-5 h-5 text-brand shrink-0 mt-0.5" />
                   {benefit}
@@ -121,9 +120,9 @@ export default async function ProductPage({ params }: { params: { slug: string, 
           {/* Trust row */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: <Truck className="w-5 h-5" />, text: isEn ? "Fast Shipping" : "شحن سريع" },
-              { icon: <Package className="w-5 h-5" />, text: isEn ? "Discreet Packaging" : "تغليف سري" },
-              { icon: <Shield className="w-5 h-5" />, text: isEn ? "Cash on Delivery" : "دفع عند الاستلام" },
+              { icon: <Truck className="w-5 h-5" />, text: "شحن سريع" },
+              { icon: <Package className="w-5 h-5" />, text: "تغليف سري" },
+              { icon: <Shield className="w-5 h-5" />, text: "دفع عند الاستلام" },
             ].map((item) => (
               <div
                 key={item.text}
@@ -150,12 +149,12 @@ export default async function ProductPage({ params }: { params: { slug: string, 
           <div className="space-y-6 order-1 md:order-2">
             <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 text-sm font-bold px-4 py-1.5 rounded-full mb-2">
               <AlertCircle className="w-4 h-4" />
-              {isEn ? "The problem you suffer from" : "المشكلة التي تعانين منها"}
+              المشكلة التي تعانين منها
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">{isEn ? "Tired of suffering in silence?" : "هل تعبتِ من هذه المعاناة بصمت؟"}</h2>
-            <p className="text-gray-600 text-lg">{isEn ? "We know these symptoms take away your comfort and keep you in constant anxiety. You are not alone in this." : "نعلم أن هذه الأعراض تسلب منك راحتك وتجعلك في قلق مستمر. لستِ وحدك في هذا."}</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">هل تعبتِ من هذه المعاناة بصمت؟</h2>
+            <p className="text-gray-600 text-lg">نعلم أن هذه الأعراض تسلب منك راحتك وتجعلك في قلق مستمر. لستِ وحدك في هذا.</p>
             <ul className="space-y-4 mt-6">
-              {(isEn && product.painPointsEn ? product.painPointsEn : product.painPoints).map((pain, i) => (
+              {product.painPoints.map((pain, i) => (
                 <li key={i} className="flex items-start gap-4 p-3 rounded-xl hover:bg-red-50/50 transition-colors">
                   <div className="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                     <span className="text-sm font-bold">✕</span>
@@ -168,9 +167,9 @@ export default async function ProductPage({ params }: { params: { slug: string, 
               <div className="absolute top-0 right-0 w-24 h-24 bg-brand/5 rounded-full -mr-12 -mt-12"></div>
               <h3 className="font-bold text-brand mb-3 flex items-center gap-2 text-xl relative z-10">
                 <Heart className="w-6 h-6 fill-brand/20" />
-                {isEn ? "The solution you deserve" : "الحل الذي تستحقينه"}
+                الحل الذي تستحقينه
               </h3>
-              <p className="text-gray-800 leading-relaxed font-medium text-lg relative z-10">{isEn && product.emotionalBenefitEn ? product.emotionalBenefitEn : product.emotionalBenefit}</p>
+              <p className="text-gray-800 leading-relaxed font-medium text-lg relative z-10">{product.emotionalBenefit}</p>
             </div>
           </div>
         </div>
@@ -183,11 +182,11 @@ export default async function ProductPage({ params }: { params: { slug: string, 
             <div>
               <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-sm font-bold px-4 py-1.5 rounded-full mb-4">
                 <Zap className="w-4 h-4" />
-                {isEn ? "Secret of Effectiveness" : "سر الفعالية"}
+                سر الفعالية
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">{isEn ? "Safe and effective natural ingredients" : "مكونات طبيعية آمنة وفعالة"}</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">مكونات طبيعية آمنة وفعالة</h2>
               <p className="text-gray-600 leading-relaxed text-lg mt-4">
-                {isEn ? "We chose the best of nature to ensure maximum effectiveness without annoying side effects. Specially designed for sensitive areas." : "اخترنا لكِ أفضل ما في الطبيعة لضمان فعالية قصوى بدون أي أعراض جانبية مزعجة. تركيبة مصممة خصيصاً للمناطق الحساسة."}
+                اخترنا لكِ أفضل ما في الطبيعة لضمان فعالية قصوى بدون أي أعراض جانبية مزعجة. تركيبة مصممة خصيصاً للمناطق الحساسة.
               </p>
             </div>
             <div className="space-y-5">
@@ -197,8 +196,8 @@ export default async function ProductPage({ params }: { params: { slug: string, 
                     {i + 1}
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-lg mb-2">{isEn && ing.nameEn ? ing.nameEn : ing.name}</h4>
-                    <p className="text-gray-600 leading-relaxed">{isEn && ing.descriptionEn ? ing.descriptionEn : ing.description}</p>
+                    <h4 className="font-bold text-gray-900 text-lg mb-2">{ing.name}</h4>
+                    <p className="text-gray-600 leading-relaxed">{ing.description}</p>
                   </div>
                 </div>
               ))}
@@ -223,48 +222,48 @@ export default async function ProductPage({ params }: { params: { slug: string, 
             </div>
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur px-6 py-3 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3 w-max">
                <ShieldCheck className="w-8 h-8 text-green-600" />
-               <div className={isEn ? "text-left" : "text-right"}>
-                 <p className="text-sm font-bold text-gray-900">{isEn ? "Licensed & Certified" : "مرخص ومعتمد"}</p>
-                 <p className="text-xs text-gray-500">{isEn ? "Food and Drug Authority SFDA" : "هيئة الغذاء والدواء SFDA"}</p>
+               <div className="text-right">
+                 <p className="text-sm font-bold text-gray-900">مرخص ومعتمد</p>
+                 <p className="text-xs text-gray-500">هيئة الغذاء والدواء SFDA</p>
                </div>
             </div>
           </div>
           <div className="space-y-6 order-1 md:order-2">
             <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-sm font-bold px-4 py-1.5 rounded-full mb-2">
               <Shield className="w-4 h-4" />
-              {isEn ? "Safety & Reliability" : "أمان وموثوقية"}
+              أمان وموثوقية
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">{isEn ? "Scientifically proven and certified for your comfort" : "مثبت علمياً ومعتمد لراحتك"}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">مثبت علمياً ومعتمد لراحتك</h2>
             <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-green-100 shadow-sm mt-6">
               <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-6 h-6 text-green-600" />
               </div>
-              <span className="text-lg font-bold text-gray-800">{isEn ? "Licensed by the Food and Drug Authority (SFDA)" : "مرخص من هيئة الغذاء والدواء (SFDA)"}</span>
+              <span className="text-lg font-bold text-gray-800">مرخص من هيئة الغذاء والدواء (SFDA)</span>
             </div>
             <div className="space-y-4 mt-6">
               <p className="text-gray-700 leading-relaxed text-lg font-medium">
                 {product.scienceProof}
               </p>
               <p className="text-gray-600 leading-relaxed text-lg">
-                {isEn ? "No need to worry anymore. Our product has undergone rigorous testing to ensure it is completely safe for daily use, even for the most sensitive skin. Use it with complete confidence." : "لا داعي للقلق بعد اليوم. منتجنا خضع لاختبارات صارمة لضمان أمانه التام للاستخدام اليومي، حتى للبشرة الأكثر حساسية. استخدميه بثقة تامة."}
+                لا داعي للقلق بعد اليوم. منتجنا خضع لاختبارات صارمة لضمان أمانه التام للاستخدام اليومي، حتى للبشرة الأكثر حساسية. استخدميه بثقة تامة.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-8">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-brand" />
-                <span className="font-medium text-gray-700">{isEn ? "Cortisone-free" : "بدون كورتيزون"}</span>
+                <span className="font-medium text-gray-700">بدون كورتيزون</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-brand" />
-                <span className="font-medium text-gray-700">{isEn ? "Does not thin the skin" : "لا يسبب ترقق الجلد"}</span>
+                <span className="font-medium text-gray-700">لا يسبب ترقق الجلد</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-brand" />
-                <span className="font-medium text-gray-700">{isEn ? "Safe for repeated use" : "آمن للاستخدام المتكرر"}</span>
+                <span className="font-medium text-gray-700">آمن للاستخدام المتكرر</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-brand" />
-                <span className="font-medium text-gray-700">{isEn ? "Dermatologically tested" : "مختبر جلدياً"}</span>
+                <span className="font-medium text-gray-700">مختبر جلدياً</span>
               </div>
             </div>
           </div>
@@ -275,18 +274,18 @@ export default async function ProductPage({ params }: { params: { slug: string, 
       <div className="mt-32 text-center">
         <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-700 text-sm font-bold px-4 py-1.5 rounded-full mb-6">
           <ThumbsUp className="w-4 h-4" />
-          {isEn ? "Real Experiences" : "تجارب حقيقية"}
+          تجارب حقيقية
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{isEn ? "Thousands of women regained their comfort" : "آلاف النساء استعدن راحتهن"}</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">آلاف النساء استعدن راحتهن</h2>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-12">
-          {isEn ? "Join over 2400 customers who trusted Naseem products to eliminate pain and embarrassment." : "انضمي إلى أكثر من 2400 عميلة وثقن في منتجات نسيم للتخلص من الألم والإحراج."}
+          انضمي إلى أكثر من 2400 عميلة وثقن في منتجات نسيم للتخلص من الألم والإحراج.
         </p>
         
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 ${isEn ? "text-left" : "text-right"}`}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
           {[
-            isEn ? { name: "Sarah M.", city: "Riyadh", text: "I suffered in silence for a long time and was embarrassed to go to the pharmacy. This product literally changed my life, the relief I felt from the first two days is indescribable.", rating: 5 } : { name: "سارة م.", city: "الرياض", text: "كنت أعاني بصمت لفترة طويلة ومحرجة أروح الصيدلية. المنتج هذا غير حياتي حرفياً، الراحة اللي حسيت فيها من أول يومين لا توصف.", rating: 5 },
-            isEn ? { name: "Umm Fahd", city: "Jeddah", text: "The best thing is that the packaging was very discreet and no one knew what I ordered. The product is cool and soothes the heat immediately. I recommend it to everyone suffering.", rating: 5 } : { name: "أم فهد", city: "جدة", text: "أفضل شيء إن التغليف كان سري جداً ومحد عرف وش طلبت. المنتج بارد ويهدي الحرارة بشكل فوري. أنصح فيه كل وحدة تعاني.", rating: 5 },
-            isEn ? { name: "Noura A.", city: "Dammam", text: "I tried many creams but this is the only one that didn't cause an allergy and its result lasted. Cash on delivery comforted me a lot.", rating: 5 } : { name: "نورة ع.", city: "الدمام", text: "جربت كريمات كثير بس هذا الوحيد اللي ما سبب لي حساسية ونتيجته طولت معي. الدفع عند الاستلام ريحني كثير.", rating: 5 }
+            { name: "سارة م.", city: "الرياض", text: "كنت أعاني بصمت لفترة طويلة ومحرجة أروح الصيدلية. المنتج هذا غير حياتي حرفياً، الراحة اللي حسيت فيها من أول يومين لا توصف.", rating: 5 },
+            { name: "أم فهد", city: "جدة", text: "أفضل شيء إن التغليف كان سري جداً ومحد عرف وش طلبت. المنتج بارد ويهدي الحرارة بشكل فوري. أنصح فيه كل وحدة تعاني.", rating: 5 },
+            { name: "نورة ع.", city: "الدمام", text: "جربت كريمات كثير بس هذا الوحيد اللي ما سبب لي حساسية ونتيجته طولت معي. الدفع عند الاستلام ريحني كثير.", rating: 5 }
           ].map((review, i) => (
             <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex text-amber-400 mb-4">
@@ -299,7 +298,7 @@ export default async function ProductPage({ params }: { params: { slug: string, 
                 <span className="font-bold text-gray-900">{review.name}</span>
                 <span className="text-sm text-gray-500 flex items-center gap-1">
                   <CheckCircle className="w-3 h-3 text-green-500" />
-                  {isEn ? `Verified Buyer - ${review.city}` : `مشتري مؤكد - ${review.city}`}
+                  مشتري مؤكد - {review.city}
                 </span>
               </div>
             </div>
@@ -316,14 +315,14 @@ export default async function ProductPage({ params }: { params: { slug: string, 
           <div className="inline-flex items-center justify-center w-24 h-24 bg-white/10 rounded-full mb-8 backdrop-blur-sm border border-white/20">
             <Award className="w-12 h-12 text-amber-400" />
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">{isEn ? "30-Day Golden Warranty" : "الضمان الذهبي لمدة 30 يوماً"}</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6">الضمان الذهبي لمدة 30 يوماً</h2>
           <p className="text-white/90 mb-10 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            {isEn ? `We are confident in the effectiveness of ${product.nameEn || product.name}. Use it for 30 days, and if you don't notice the difference you deserve, we will refund you in full with no questions asked.` : `نحن واثقون من فعالية ${product.name}. استخدميه لمدة 30 يوماً، وإذا لم تلاحظي الفرق الذي تستحقينه، سنعيد لكِ كامل المبلغ بدون أي أسئلة أو تعقيدات.`}
+            نحن واثقون من فعالية {product.name}. استخدميه لمدة 30 يوماً، وإذا لم تلاحظي الفرق الذي تستحقينه، سنعيد لكِ كامل المبلغ بدون أي أسئلة أو تعقيدات.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="#buy" className="inline-flex items-center justify-center gap-3 bg-white text-brand px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-gray-50 transition-colors">
               <Shield className="w-6 h-6 text-brand" />
-              <span>{isEn ? "Shop now with total peace of mind" : "تسوقي الآن براحة بال تامة"}</span>
+              <span>تسوقي الآن براحة بال تامة</span>
             </Link>
           </div>
         </div>
@@ -334,28 +333,28 @@ export default async function ProductPage({ params }: { params: { slug: string, 
         <div className="bg-cream rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-sm h-fit">
           <div className="inline-flex items-center gap-2 bg-brand-50 text-brand text-sm font-bold px-4 py-1.5 rounded-full mb-6">
             <Clock className="w-4 h-4" />
-            {isEn ? "Care Routine" : "روتين العناية"}
+            روتين العناية
           </div>
-          <h2 className="font-bold text-gray-900 mb-6 text-3xl">{isEn ? "Proper Usage Method" : "طريقة الاستخدام الصحيحة"}</h2>
+          <h2 className="font-bold text-gray-900 mb-6 text-3xl">طريقة الاستخدام الصحيحة</h2>
           <div className="prose prose-lg text-gray-700 leading-relaxed">
-            <p className="text-xl font-medium mb-6">{isEn && product.howToUseEn ? product.howToUseEn : product.howToUse}</p>
+            <p className="text-xl font-medium mb-6">{product.howToUse}</p>
             <div className="bg-white p-6 rounded-2xl border border-gray-100 mt-8">
               <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                {isEn ? "Tips for better results:" : "نصائح لنتائج أفضل:"}
+                نصائح لنتائج أفضل:
               </h4>
               <ul className="space-y-3 m-0 p-0 list-none">
                 <li className="flex items-start gap-2">
                   <span className="text-brand font-bold mt-1">•</span>
-                  <span>{isEn ? "Consistency is the key to lasting results." : "الاستمرارية هي مفتاح النتائج الدائمة."}</span>
+                  <span>الاستمرارية هي مفتاح النتائج الدائمة.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brand font-bold mt-1">•</span>
-                  <span>{isEn ? "Best used after gently cleaning and drying the area." : "يفضل استخدامه بعد تنظيف وتجفيف المنطقة بلطف."}</span>
+                  <span>يفضل استخدامه بعد تنظيف وتجفيف المنطقة بلطف.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brand font-bold mt-1">•</span>
-                  <span>{isEn ? "For external use only." : "للاستخدام الخارجي فقط."}</span>
+                  <span>للاستخدام الخارجي فقط.</span>
                 </li>
               </ul>
             </div>
@@ -363,30 +362,30 @@ export default async function ProductPage({ params }: { params: { slug: string, 
         </div>
 
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-sm h-fit">
-           <h2 className="font-bold text-gray-900 mb-8 text-3xl">{isEn ? "Frequently Asked Questions" : "الأسئلة الشائعة"}</h2>
+           <h2 className="font-bold text-gray-900 mb-8 text-3xl">الأسئلة الشائعة</h2>
            <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
-              <AccordionTrigger className={`${isEn ? "text-left" : "text-right"} font-bold text-lg`}>{isEn ? "When will I notice results?" : "متى ألاحظ النتائج؟"}</AccordionTrigger>
+              <AccordionTrigger className="text-right font-bold text-lg">متى ألاحظ النتائج؟</AccordionTrigger>
               <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                {isEn ? "Most of our customers notice a significant improvement in comfort and heat reduction from the first days of use. For best results, we recommend continuing the routine for at least two weeks." : "معظم عملائنا يلاحظون تحسناً ملحوظاً في مستوى الراحة وتخفيف الحرارة من الأيام الأولى للاستخدام. للحصول على أفضل النتائج، ننصح بالاستمرار على الروتين لمدة أسبوعين على الأقل."}
+                معظم عملائنا يلاحظون تحسناً ملحوظاً في مستوى الراحة وتخفيف الحرارة من الأيام الأولى للاستخدام. للحصول على أفضل النتائج، ننصح بالاستمرار على الروتين لمدة أسبوعين على الأقل.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger className={`${isEn ? "text-left" : "text-right"} font-bold text-lg`}>{isEn ? "Is the product safe for daily use?" : "هل المنتج آمن للاستخدام اليومي؟"}</AccordionTrigger>
+              <AccordionTrigger className="text-right font-bold text-lg">هل المنتج آمن للاستخدام اليومي؟</AccordionTrigger>
               <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                {isEn ? "Yes, absolutely. Our formula is based on 100% natural ingredients, free of cortisone and harsh chemicals, making it completely safe for continuous daily use without causing skin thinning." : "نعم، بالتأكيد. تركيبتنا تعتمد على مكونات طبيعية 100% خالية من الكورتيزون والمواد الكيميائية القاسية، مما يجعلها آمنة تماماً للاستخدام اليومي المستمر دون التسبب في ترقق الجلد."}
+                نعم، بالتأكيد. تركيبتنا تعتمد على مكونات طبيعية 100% خالية من الكورتيزون والمواد الكيميائية القاسية، مما يجعلها آمنة تماماً للاستخدام اليومي المستمر دون التسبب في ترقق الجلد.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
-              <AccordionTrigger className={`${isEn ? "text-left" : "text-right"} font-bold text-lg`}>{isEn ? "How is the order packaged? Is it discreet?" : "كيف يتم تغليف الطلب؟ هل هو سري؟"}</AccordionTrigger>
+              <AccordionTrigger className="text-right font-bold text-lg">كيف يتم تغليف الطلب؟ هل هو سري؟</AccordionTrigger>
               <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                {isEn ? "We value your privacy completely. All our orders are shipped in plain, unmarked boxes with no details or logos indicating the contents of the shipment on the outside. The delivery person will not know the contents." : "نحن نقدر خصوصيتك تماماً. جميع طلباتنا يتم شحنها في صناديق سادة غير مميزة، ولا يوجد أي تفاصيل أو شعارات تدل على محتوى الشحنة من الخارج. المندوب لن يعرف محتوى الطلب."}
+                نحن نقدر خصوصيتك تماماً. جميع طلباتنا يتم شحنها في صناديق سادة غير مميزة، ولا يوجد أي تفاصيل أو شعارات تدل على محتوى الشحنة من الخارج. المندوب لن يعرف محتوى الطلب.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4">
-              <AccordionTrigger className={`${isEn ? "text-left" : "text-right"} font-bold text-lg`}>{isEn ? "Can I pay on delivery?" : "هل يمكنني الدفع عند الاستلام؟"}</AccordionTrigger>
+              <AccordionTrigger className="text-right font-bold text-lg">هل يمكنني الدفع عند الاستلام؟</AccordionTrigger>
               <AccordionContent className="text-gray-600 text-base leading-relaxed">
-                {isEn ? "Yes, we offer cash on delivery to all regions of Saudi Arabia to ensure your complete comfort and confidence when ordering." : "نعم، نوفر خدمة الدفع عند الاستلام لجميع مناطق المملكة العربية السعودية لضمان راحتك وثقتك التامة عند الطلب."}
+                نعم، نوفر خدمة الدفع عند الاستلام لجميع مناطق المملكة العربية السعودية لضمان راحتك وثقتك التامة عند الطلب.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -397,20 +396,20 @@ export default async function ProductPage({ params }: { params: { slug: string, 
       <div className="mt-16 p-6 bg-gray-50 rounded-2xl border border-gray-100 text-center max-w-4xl mx-auto">
         <div className="flex items-center justify-center gap-2 mb-2 text-gray-500">
           <AlertCircle className="w-5 h-5" />
-          <span className="font-bold">{isEn ? "Important Notice" : "تنويه هام"}</span>
+          <span className="font-bold">تنويه هام</span>
         </div>
         <p className="text-sm text-gray-500 leading-relaxed">
-          {isEn ? "Naseem products are designed for personal care and symptom relief. They do not replace consulting a specialist doctor in severe cases, continuous bleeding, or severe pain." : "منتجات نسيم مصممة للعناية الشخصية وتخفيف الأعراض المزعجة. هي لا تُغني عن استشارة الطبيب المختص في الحالات الشديدة، النزيف المستمر، أو الألم الحاد."}
+          منتجات نسيم مصممة للعناية الشخصية وتخفيف الأعراض المزعجة. هي لا تُغني عن استشارة الطبيب المختص في الحالات الشديدة، النزيف المستمر، أو الألم الحاد.
         </p>
       </div>
 
       {/* Cross-sells */}
       {crossSells.length > 0 && (
         <div className="mt-24 pb-24">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{isEn ? "You might also like for better results" : "قد يعجبك أيضاً لنتائج أفضل"}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">قد يعجبك أيضاً لنتائج أفضل</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-4xl mx-auto">
             {crossSells.map((p) => (
-              <ProductCard key={p.sku} product={p} lang={params.lang} />
+              <ProductCard key={p.sku} product={p} />
             ))}
           </div>
         </div>
@@ -420,14 +419,14 @@ export default async function ProductPage({ params }: { params: { slug: string, 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 animate-in slide-in-from-bottom duration-500">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="hidden sm:block">
-            <h3 className="font-bold text-gray-900 line-clamp-1">{isEn && product.nameEn ? product.nameEn : product.name}</h3>
-            <p className="text-sm text-brand font-bold">{isEn ? "199 SAR per item" : "199 ريال للقطعة"}</p>
+            <h3 className="font-bold text-gray-900 line-clamp-1">{product.name}</h3>
+            <p className="text-sm text-brand font-bold">199 ريال للقطعة</p>
           </div>
           <Link 
             href="#buy" 
             className="flex-1 sm:flex-none w-full sm:w-64 flex items-center justify-center bg-brand text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-lg hover:bg-brand-700 transition-colors"
           >
-            {isEn ? "Add to Cart" : "أضف للسلة"}
+            أضف للسلة
           </Link>
         </div>
       </div>

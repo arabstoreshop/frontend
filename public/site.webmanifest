@@ -1,0 +1,16 @@
+{
+  "name": "Naseem — Global Hemorrhoid Care",
+  "short_name": "Naseem",
+  "description": "Complete hemorrhoid care system — 9 specialized products, one trusted global brand.",
+  "start_url": "/ar",
+  "display": "standalone",
+  "background_color": "#FAF8F3",
+  "theme_color": "#3F6B5A",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,12 +1,14 @@
 import { CheckCircle, Heart, Leaf, Shield } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "عن نسيم | Naseem",
-  description: "تعرف على قصة نسيم ورسالتنا في تقديم منتجات عناية شخصية مميزة للسوق السعودي",
+  title: "About Naseem | Global Hemorrhoid Care",
+  description:
+    "Naseem is a global specialty brand focused on hemorrhoid care — one problem, multiple solutions, delivered with privacy and science-backed ingredients.",
 };
 
 export default function AboutPage() {
@@ -14,13 +16,13 @@ export default function AboutPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-14">
       {/* Hero */}
       <div className="text-center mb-14">
-        <div className="w-16 h-16 rounded-full bg-brand flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold shadow-lg">
-          ن
+        <div className="relative w-16 h-16 rounded-full overflow-hidden mx-auto mb-6 shadow-lg ring-2 ring-brand/20">
+          <Image src="/favicon.png" alt="Naseem" fill className="object-cover" sizes="64px" />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">عن نسيم</h1>
         <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-          نسيم ولدت من إدراك حقيقي — أن ملايين الأشخاص في المملكة يعانون من انزعاج يومي صامت
-          ولا يجدون منتجات عناية تراعي احتياجاتهم الخاصة وخصوصيتهم.
+          نسيم علامة عالمية متخصصة في علاج البواسير — نقدّم 9 منتجات تُعالج نفس المشكلة بطرق
+          مختلفة: علاج فوري، دعم داخلي، وقاية، وعناية يومية. بخصوصية كاملة وثقة علمية.
         </p>
       </div>
 

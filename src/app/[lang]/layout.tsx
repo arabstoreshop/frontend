@@ -9,25 +9,52 @@ import { PixelScripts } from "@/components/pixels/PixelScripts";
 
 export const metadata: Metadata = {
   title: {
-    default: "نسيم | منتجات العناية الشخصية — Naseem",
-    template: "%s | نسيم",
+    default: "Naseem | Global Hemorrhoid Care — نسيم",
+    template: "%s | Naseem",
   },
   description:
-    "نسيم — منتجات عناية شخصية مميزة تهدّئ وتدعم الراحة اليومية. شحن سريع لجميع مناطق المملكة العربية السعودية.",
-  keywords: ["نسيم", "عناية شخصية", "منتجات طبيعية", "المملكة العربية السعودية"],
+    "Naseem is a global specialty brand for hemorrhoid care — 9 science-backed products that treat the same problem from every angle: topical relief, vein support, daily hygiene, and comfort. Discreet shipping across Saudi Arabia.",
+  keywords: [
+    "Naseem",
+    "نسيم",
+    "hemorrhoid treatment",
+    "علاج البواسير",
+    "chitosan gel",
+    "diosmin",
+    "psyllium fiber",
+    "global wellness brand",
+    "Saudi Arabia",
+  ],
   metadataBase: new URL("https://naseem.beauty"),
+  icons: {
+    icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: [{ url: "/favicon.png", type: "image/png" }],
+    shortcut: ["/favicon.png"],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
-    title: "نسيم | عناية شخصية",
-    description: "منتجات عناية شخصية مميزة للمرأة والرجل السعودي",
+    title: "Naseem | Global Hemorrhoid Care",
+    description:
+      "One problem. Nine solutions. Naseem offers a complete hemorrhoid care system — from instant relief to long-term prevention.",
     url: "https://naseem.beauty",
-    siteName: "نسيم",
+    siteName: "Naseem",
     locale: "ar_SA",
+    alternateLocale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/brand/hero-collection.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Naseem hemorrhoid care collection",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "نسيم | Naseem",
-    description: "منتجات عناية شخصية مميزة",
+    title: "Naseem | Global Hemorrhoid Care",
+    description: "Complete hemorrhoid care — 9 specialized products, one trusted brand.",
+    images: ["/brand/hero-collection.jpg"],
   },
   robots: {
     index: true,
@@ -43,6 +70,8 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

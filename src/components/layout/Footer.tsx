@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -8,17 +9,17 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg">
-                ن
+              <div className="relative w-9 h-9 rounded-full overflow-hidden ring-1 ring-white/20">
+                <Image src="/favicon.png" alt="Naseem" fill className="object-cover" sizes="36px" />
               </div>
               <div>
                 <div className="text-xl font-bold">نسيم</div>
-                <div className="text-[10px] text-white/50 tracking-widest uppercase">Naseem</div>
+                <div className="text-[10px] text-white/50 tracking-widest uppercase">Global Hemorrhoid Care</div>
               </div>
             </div>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">
-              منتجات عناية شخصية مختارة بعناية للمرأة والرجل السعودي.
-              جودة فعلية، بمكونات مثبتة.
+              علامة عالمية متخصصة في علاج البواسير — 9 منتجات تُعالج نفس المشكلة بطرق مختلفة:
+              علاج فوري، دعم داخلي، وقاية، وعناية يومية.
             </p>
             <p className="text-white/40 text-xs mt-4 leading-relaxed">
               منتجات نسيم للعناية الشخصية ولا تُغني عن استشارة الطبيب في الحالات الشديدة أو النزيف أو الألم المستمر.

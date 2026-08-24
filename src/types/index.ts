@@ -22,9 +22,6 @@ export interface Product {
   scienceProof?: string;
   sfdaApproved?: boolean;
   ingredientsDetails?: { name: string; description: string; nameEn?: string; descriptionEn?: string }[];
-  salesCount?: string;
-  rating?: number;
-  reviewCount?: string;
 }
 
 export interface Offer {

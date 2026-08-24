@@ -1,6 +1,7 @@
 "use client";
 
 import { Globe, Menu, ShoppingCart, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,12 +35,20 @@ export function Header() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href={`/${currentLang}`} className="flex items-center gap-2.5 shrink-0">
-          <div className="w-9 h-9 rounded-full bg-brand flex items-center justify-center text-white font-bold text-lg leading-none select-none shadow-sm">
-            ن
+          <div className="relative w-9 h-9 rounded-full overflow-hidden shadow-sm ring-1 ring-brand/10">
+            <Image
+              src="/favicon.png"
+              alt="Naseem"
+              fill
+              className="object-cover"
+              sizes="36px"
+            />
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-xl font-bold text-brand tracking-tight">نسيم</span>
-            <span className="text-[10px] text-gray-400 tracking-widest uppercase">Naseem</span>
+            <span className="text-[10px] text-gray-400 tracking-widest uppercase">
+              {currentLang === "ar" ? "Global Hemorrhoid Care" : "Global Hemorrhoid Care"}
+            </span>
           </div>
         </Link>
 

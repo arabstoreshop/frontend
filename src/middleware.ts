@@ -1,27 +1,35 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const locales = ["ar", "en"];
-const defaultLocale = "ar";
+const SUPPORTED_LANGS = ["ar", "en"];
+const DEFAULT_LANG = "ar";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  // Skip static files and API routes
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/images") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
+  // Check if pathname already has a supported language prefix
+  const hasLangPrefix = SUPPORTED_LANGS.some(
+    (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`)
   );
 
-  if (pathnameHasLocale) return;
+  if (!hasLangPrefix) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${DEFAULT_LANG}${pathname}`;
+    return NextResponse.redirect(url);
+  }
 
-  // Redirect if there is no locale
-  const locale = defaultLocale;
-  request.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    // Skip all internal paths (_next, images, etc.)
-    '/((?!_next|images|api|favicon.ico).*)',
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/).*)"],
 };

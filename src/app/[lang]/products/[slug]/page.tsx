@@ -10,11 +10,13 @@ import { getCrossells, getProductBySlug, PRODUCTS } from "@/lib/products";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface Props {
-  params: { slug: string };
+  params: { lang: string; slug: string };
 }
 
 export async function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
+  return ["ar", "en"].flatMap((lang) =>
+    PRODUCTS.map((p) => ({ lang, slug: p.slug }))
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

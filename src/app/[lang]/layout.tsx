@@ -7,6 +7,10 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { PixelScripts } from "@/components/pixels/PixelScripts";
 
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
+}
+
 export const metadata: Metadata = {
   title: {
     default: "Naseem | Global Hemorrhoid Care — نسيم",

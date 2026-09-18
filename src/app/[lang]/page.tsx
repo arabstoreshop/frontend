@@ -1,13 +1,16 @@
 import {
   ArrowLeft,
   Award,
+  Bath,
   CheckCircle,
   ClipboardCheck,
   HeartPulse,
   Package,
   ShieldCheck,
+  Sofa,
   Sparkles,
   Star,
+  Stethoscope,
   Truck,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -56,6 +59,24 @@ const problemCards = [
     subtitle: "ألياف السيليوم ومناديل الويتش هازل — امنع المشكلة قبل حدوثها",
     href: "/products/psyllium-fiber-capsules",
     icon: ShieldCheck,
+  },
+  {
+    title: "البواسير الداخلية والحالات المتقدمة",
+    subtitle: "تحاميل الكيتوزان والأعشاب — تصل مباشرة لمصدر المشكلة من الداخل",
+    href: "/products/herbal-hemorrhoid-suppositories",
+    icon: Stethoscope,
+  },
+  {
+    title: "ألم الجلوس في العمل والسيارة",
+    subtitle: "وسادة الراحة الطبية بالميموري فوم — اجلس بدون ضغط على المنطقة",
+    href: "/products/hemorrhoid-donut-cushion",
+    icon: Sofa,
+  },
+  {
+    title: "التعافي الطبيعي في المنزل",
+    subtitle: "حوض المقعدة القابل للطي — حمّام دافئ مهدّئ يُقلّل التورم",
+    href: "/products/foldable-sitz-bath",
+    icon: Bath,
   },
 ];
 
@@ -113,7 +134,7 @@ export default function HomePage() {
                 <span className="block text-brand">بحلول متكاملة مُثبتة علمياً</span>
               </h1>
               <p className="max-w-xl text-lg leading-8 text-gray-600">
-                نسيم يقدّم 9 منتجات متخصصة: علاج فوري بالكيتوزان، دعم للأوردة بالديوسمين والكركمين، وقاية بالألياف، عناية يومية، وراحة للجلوس. اطلب أونلاين بتغليف سري والدفع عند الاستلام.
+                نسيم يقدّم 9 منتجات متخصصة: علاج فوري بالكيتوزان، دعم للأوردة بالديوسمين والكركمين، وقاية بالألياف، عناية يومية، تحاميل للحالات الداخلية، وراحة للجلوس بالوسادة وحوض المقعدة. اطلب أونلاين بتغليف سري والدفع عند الاستلام.
               </p>
             </div>
 
@@ -207,7 +228,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {problemCards.map((card) => {
               const Icon = card.icon;
               return (
@@ -250,17 +271,10 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PRODUCTS.slice(0, 6).map((product) => (
+            {PRODUCTS.map((product) => (
               <ProductCard key={product.sku} product={product} />
             ))}
           </div>
-          {PRODUCTS.length > 6 && (
-            <div className="mt-8 text-center">
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/collection">عرض جميع المنتجات ({PRODUCTS.length})</Link>
-              </Button>
-            </div>
-          )}
         </div>
       </section>
 
@@ -288,7 +302,7 @@ export default function HomePage() {
               كل منتج له وظيفة واضحة في روتين الراحة
             </h2>
             <p className="leading-8 text-gray-600">
-              كل منتج مبني على أبحاث علمية: الكيتوزان للحماية والإرقاء، الديوسمين لتقوية الأوردة، الكركمين لوقف التطوّر، السيليوم لمنع الإمساك. مكونات مُثبتة بتجارب سريرية — بدون ادعاءات فارغة.
+              كل منتج له وظيفة واضحة في الروتين: الكيتوزان للحماية والإرقاء، الديوسمين لتقوية الأوردة، الكركمين لدعم الالتهاب، السيليوم للإمساك، التحاميل للعناية الداخلية، والوسادة وحوض المقعدة لراحة الجلوس. مكونات مذكورة بوضوح — بدون ادعاءات علاج نهائي.
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">

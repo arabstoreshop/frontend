@@ -22,7 +22,7 @@ export default function AboutPage() {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">عن نسيم</h1>
         <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
           نسيم علامة عالمية متخصصة في علاج البواسير — نقدّم 9 منتجات تُعالج نفس المشكلة بطرق
-          مختلفة: علاج فوري، دعم داخلي، وقاية، وعناية يومية. بخصوصية كاملة وثقة علمية.
+          مختلفة: علاج فوري، دعم داخلي، وقاية، عناية يومية، وراحة للجلوس. بخصوصية كاملة وثقة علمية.
         </p>
       </div>
 

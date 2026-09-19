@@ -5,11 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(sar: number, lang: "ar" | "en" = "ar"): string {
-  if (lang === "en") {
-    return `${sar.toLocaleString("en-US")} SAR`;
+export function formatPrice(
+  amount: number,
+  lang: "ar" | "en" = "ar",
+  currency: "SAR" | "MAD" = "SAR"
+): string {
+  if (currency === "MAD") {
+    return lang === "en" ? `${amount} DH` : `${amount.toLocaleString("ar-MA")} د.م.`;
   }
-  return `${sar.toLocaleString("ar-SA")} ريال`;
+  if (lang === "en") {
+    return `${amount.toLocaleString("en-US")} SAR`;
+  }
+  return `${amount.toLocaleString("ar-SA")} ريال`;
 }
 
 export function generateEventId(): string {

@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { OFFERS } from "@/lib/products";
+import { BEAUTY_OFFERS, OFFERS } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import type { Product } from "@/types";
@@ -15,10 +15,12 @@ interface OfferSelectorProps {
 }
 
 export function OfferSelector({ product }: OfferSelectorProps) {
-  const [selectedQty, setSelectedQty] = useState<1 | 2 | 3>(1);
+  const [selectedQty, setSelectedQty] = useState<1 | 2 | 3>(product.line === "beauty" ? 2 : 1);
   const { addItem, openCart } = useCartStore();
+  const currency = product.currency === "MAD" ? "MAD" : "SAR";
+  const offers = product.line === "beauty" ? BEAUTY_OFFERS : OFFERS;
 
-  const selectedOffer = OFFERS.find((o) => o.qty === selectedQty)!;
+  const selectedOffer = offers.find((o) => o.qty === selectedQty)!;
 
   const handleAddToCart = () => {
     addItem({
@@ -37,7 +39,7 @@ export function OfferSelector({ product }: OfferSelectorProps) {
       {/* Offer Options */}
       <div className="space-y-2.5">
         <p className="text-sm font-medium text-gray-600">اختر الكمية:</p>
-        {OFFERS.map((offer) => (
+        {offers.map((offer) => (
           <button
             key={offer.qty}
             onClick={() => setSelectedQty(offer.qty)}
@@ -65,7 +67,7 @@ export function OfferSelector({ product }: OfferSelectorProps) {
                 </p>
                 {offer.originalPrice && (
                   <p className="text-xs text-gray-400 line-through">
-                    {formatPrice(offer.originalPrice)}
+                    {formatPrice(offer.originalPrice, "ar", currency)}
                   </p>
                 )}
               </div>
@@ -77,7 +79,7 @@ export function OfferSelector({ product }: OfferSelectorProps) {
                 </Badge>
               )}
               <span className={`font-bold text-base ${selectedQty === offer.qty ? "text-brand" : "text-gray-700"}`}>
-                {formatPrice(offer.price)}
+                {formatPrice(offer.price, "ar", currency)}
               </span>
             </div>
           </button>
@@ -86,15 +88,15 @@ export function OfferSelector({ product }: OfferSelectorProps) {
 
       {/* CTA */}
       <Button size="xl" className="w-full text-lg" onClick={handleAddToCart}>
-        أضف إلى السلة — {formatPrice(selectedOffer.price)}
+        أضف إلى السلة — {formatPrice(selectedOffer.price, "ar", currency)}
       </Button>
 
       <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
         <span>💳 الدفع عند الاستلام</span>
         <span>·</span>
-        <span>📦 شحن سريع</span>
+        <span>{product.currency === "MAD" ? "📦 توصيل المغرب" : "📦 شحن سريع"}</span>
         <span>·</span>
-        <span>🔒 تغليف خاص</span>
+        <span>🔒 تغليف أنيق</span>
       </div>
     </div>
   );

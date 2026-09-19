@@ -41,6 +41,7 @@ export function ProductCard({ product, showAddToCart = true, lang = "ar" }: Prod
             src={product.image}
             alt={isEn && product.nameEn ? product.nameEn : product.name}
             fill
+            unoptimized
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute top-3 start-3">
@@ -72,9 +73,17 @@ export function ProductCard({ product, showAddToCart = true, lang = "ar" }: Prod
         </p>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="text-base sm:text-lg font-bold text-brand">{formatPrice(199, lang)}</span>
+            <span className="text-base sm:text-lg font-bold text-brand">
+              {formatPrice(199, lang, product.currency === "MAD" ? "MAD" : "SAR")}
+            </span>
             <p className="text-[9px] sm:text-[11px] text-gray-400">
-              {isEn ? "2 for 279 SAR · 3 for 349 SAR" : "قطعتين 279 ريال · ثلاث 349 ريال"}
+              {product.currency === "MAD"
+                ? isEn
+                  ? "2 for 279 DH · 3 for 388 DH"
+                  : "قطعتين 279 د.م. · ثلاث 388 د.م."
+                : isEn
+                  ? "2 for 279 SAR · 3 for 349 SAR"
+                  : "قطعتين 279 ريال · ثلاث 349 ريال"}
             </p>
           </div>
         </div>

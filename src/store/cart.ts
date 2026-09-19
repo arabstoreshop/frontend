@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { BUNDLE_PRICES, UPSELL_PRICE } from "@/lib/products";
+import { BEAUTY_BUNDLE_PRICES, BUNDLE_PRICES, getProductBySku, UPSELL_PRICE } from "@/lib/products";
 import type { CartItem } from "@/types";
 
 interface CartState {
@@ -79,7 +79,9 @@ function recomputePrices(items: CartItem[]): CartItem[] {
   const upsellItems = items.filter((i) => i.isUpsell);
 
   const mainQty = mainItems.reduce((s, i) => s + i.quantity, 0);
-  const bundlePrice = BUNDLE_PRICES[mainQty] ?? 199;
+  const isBeauty = mainItems.some((i) => getProductBySku(i.sku)?.line === "beauty");
+  const table = isBeauty ? BEAUTY_BUNDLE_PRICES : BUNDLE_PRICES;
+  const bundlePrice = table[mainQty] ?? (isBeauty ? 199 : 129);
 
   // Assign bundle price to first main item, 0 to rest
   let remaining = bundlePrice;

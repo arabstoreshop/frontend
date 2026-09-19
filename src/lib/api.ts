@@ -2,6 +2,32 @@ import type { OrderPayload, OrderResponse } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.naseem.beauty";
 
+export type PublicPixels = {
+  meta_pixel_id: string;
+  tiktok_pixel_id: string;
+  snap_pixel_id: string;
+};
+
+export async function fetchPublicPixels(): Promise<PublicPixels> {
+  const empty: PublicPixels = {
+    meta_pixel_id: "",
+    tiktok_pixel_id: "",
+    snap_pixel_id: "",
+  };
+  try {
+    const res = await fetch(`${API_URL}/config/public`, { cache: "no-store" });
+    if (!res.ok) return empty;
+    const data = await res.json();
+    return {
+      meta_pixel_id: data.meta_pixel_id || "",
+      tiktok_pixel_id: data.tiktok_pixel_id || "",
+      snap_pixel_id: data.snap_pixel_id || "",
+    };
+  } catch {
+    return empty;
+  }
+}
+
 export async function placeOrder(payload: OrderPayload): Promise<OrderResponse> {
   const res = await fetch(`${API_URL}/orders`, {
     method: "POST",

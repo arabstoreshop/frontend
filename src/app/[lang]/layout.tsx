@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "./globals.css";
 
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CheckoutModal } from "@/components/checkout/CheckoutModal";
@@ -13,11 +12,11 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
   title: {
-    default: "Naseem | Global Hemorrhoid Care — نسيم",
+    default: "نسيم | جمال وعناية — Naseem Beauty",
     template: "%s | Naseem",
   },
   description:
-    "Naseem is a global specialty brand for hemorrhoid care — 9 science-backed products that treat the same problem from every angle: topical relief, vein support, daily hygiene, and comfort. Discreet shipping across Saudi Arabia.",
+    "نسيم للجمال: سكالب، بارير، ريغارد — موضعي + جامي حلال. الدفع عند الاستلام فالمغرب. ومجموعة العناية الحساسة.",
   keywords: [
     "Naseem",
     "نسيم",
@@ -66,36 +65,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function LangLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { lang: string };
 }) {
+  const dir = params.lang === "en" ? "ltr" : "rtl";
   return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="min-h-screen flex flex-col font-arabic antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CartDrawer />
-        <CheckoutModal />
-        <PixelScripts />
-      </body>
-    </html>
+    <div lang={params.lang} dir={dir} className="min-h-screen flex flex-col font-arabic">
+      <Header />
+      <main className="flex-1">{children}</main>
+      <Footer />
+      <CartDrawer />
+      <CheckoutModal />
+      <PixelScripts />
+    </div>
   );
 }

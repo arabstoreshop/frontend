@@ -22,6 +22,8 @@ export interface Product {
   scienceProof?: string;
   sfdaApproved?: boolean;
   ingredientsDetails?: { name: string; description: string; nameEn?: string; descriptionEn?: string }[];
+  line?: "beauty" | "care";
+  currency?: "SAR" | "MAD";
 }
 
 export interface Offer {

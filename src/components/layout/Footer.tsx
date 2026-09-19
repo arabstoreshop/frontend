@@ -14,12 +14,11 @@ export function Footer() {
               </div>
               <div>
                 <div className="text-xl font-bold">نسيم</div>
-                <div className="text-[10px] text-white/50 tracking-widest uppercase">Global Hemorrhoid Care</div>
+                <div className="text-[10px] text-white/50 tracking-widest uppercase">Beauty & Care</div>
               </div>
             </div>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">
-              علامة عالمية متخصصة في علاج البواسير — 9 منتجات تُعالج نفس المشكلة بطرق مختلفة:
-              علاج فوري، دعم داخلي، وقاية، وعناية يومية.
+              نسيم: عناية وجمال. مجموعة المغرب للشعر والبشرة والعين، ومجموعة العناية الحساسة.
             </p>
             <p className="text-white/40 text-xs mt-4 leading-relaxed">
               منتجات نسيم للعناية الشخصية ولا تُغني عن استشارة الطبيب في الحالات الشديدة أو النزيف أو الألم المستمر.
@@ -48,9 +47,9 @@ export function Footer() {
             </ul>
             <div className="mt-6 p-3 rounded-lg bg-white/10">
               <p className="text-xs text-white/60 leading-relaxed">
-                💳 الدفع عند الاستلام فقط<br />
-                📦 شحن سريع لجميع مناطق المملكة<br />
-                🔒 تغليف خاص وسري
+                💳 الدفع عند الاستلام<br />
+                📦 المغرب والسعودية<br />
+                🔒 تغليف أنيق
               </p>
             </div>
           </div>

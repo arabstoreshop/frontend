@@ -1,6 +1,8 @@
 import type { Offer, Product } from "@/types";
 
-export const PRODUCTS: Product[] = [
+import { BEAUTY_PRODUCTS } from "./beauty-products";
+
+const CARE_PRODUCTS: Product[] = [
   /* ──────────────────────────────────────────────
      1. HERO — Chitosan Bio-Gel (جل الكيتوزان)
      ────────────────────────────────────────────── */
@@ -508,6 +510,8 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
+export const PRODUCTS: Product[] = [...BEAUTY_PRODUCTS, ...CARE_PRODUCTS];
+
 export const OFFERS: Offer[] = [
   {
     qty: 1,
@@ -530,6 +534,30 @@ export const OFFERS: Offer[] = [
   },
 ];
 
+export const BEAUTY_OFFERS: Offer[] = [
+  { qty: 1, label: "قطعة واحدة · 30 يوم", price: 199 },
+  {
+    qty: 2,
+    label: "قطعتان · 60 يوم",
+    price: 279,
+    originalPrice: 398,
+    badge: "الأكثر طلباً",
+  },
+  {
+    qty: 3,
+    label: "ثلاث قطع",
+    price: 388,
+    originalPrice: 597,
+    badge: "وفّري 209 د.م.",
+  },
+];
+
+export const BEAUTY_BUNDLE_PRICES: Record<number, number> = {
+  1: 199,
+  2: 279,
+  3: 388,
+};
+
 export const UPSELL_PRICE = 99;
 
 export function getProductBySlug(slug: string): Product | undefined {
@@ -541,7 +569,19 @@ export function getProductBySku(sku: string): Product | undefined {
 }
 
 export function getCrossells(currentSku: string): Product[] {
-  return PRODUCTS.filter((p) => p.sku !== currentSku).slice(0, 3);
+  const current = getProductBySku(currentSku);
+  const rest = PRODUCTS.filter((p) => p.sku !== currentSku);
+  const same = rest.filter((p) => p.line === current?.line);
+  const other = rest.filter((p) => p.line !== current?.line);
+  return [...same, ...other].slice(0, 3);
+}
+
+export function getBeautyProducts(): Product[] {
+  return PRODUCTS.filter((p) => p.line === "beauty");
+}
+
+export function getCareProducts(): Product[] {
+  return PRODUCTS.filter((p) => p.line !== "beauty");
 }
 
 export const BUNDLE_PRICES: Record<number, number> = {

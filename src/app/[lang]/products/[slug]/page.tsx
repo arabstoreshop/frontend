@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BeautyLanding } from "@/components/product/BeautyLanding";
 import { OfferSelector } from "@/components/product/OfferSelector";
 import { ProductCard } from "@/components/product/ProductCard";
 import { getCrossells, getProductBySlug, PRODUCTS } from "@/lib/products";
@@ -34,6 +35,10 @@ export default function ProductPage({ params }: Props) {
 
   const crossSells = getCrossells(product.sku);
 
+  if (product.line === "beauty") {
+    return <BeautyLanding product={product} />;
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       {/* Breadcrumb */}
@@ -54,6 +59,7 @@ export default function ProductPage({ params }: Props) {
               src={product.image}
               alt={product.name}
               fill
+              unoptimized
               className="object-cover"
               priority
             />
@@ -72,6 +78,7 @@ export default function ProductPage({ params }: Props) {
                     src={img}
                     alt={`${product.name} ${i + 1}`}
                     fill
+                    unoptimized
                     className="object-cover"
                   />
                 </div>

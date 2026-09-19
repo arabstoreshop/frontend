@@ -47,7 +47,7 @@ export function Header() {
           <div className="flex flex-col leading-none">
             <span className="text-xl font-bold text-brand tracking-tight">نسيم</span>
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">
-              {currentLang === "ar" ? "Global Hemorrhoid Care" : "Global Hemorrhoid Care"}
+              {currentLang === "ar" ? "جمال وعناية" : "Beauty & Care"}
             </span>
           </div>
         </Link>

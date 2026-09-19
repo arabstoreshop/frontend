@@ -16,12 +16,12 @@ import Link from "next/link";
 
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
-import { PRODUCTS } from "@/lib/products";
+import { getBeautyProducts, getCareProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
-  title: "نسيم | علاج البواسير المتكامل — 9 منتجات متخصصة | السعودية",
+  title: "نسيم | جمال المغرب — سكالب · بارير · ريغارد",
   description:
-    "نسيم يقدم حلولاً متكاملة لعلاج البواسير: جل الكيتوزان، كبسولات الديوسمين والكركمين، ألياف السيليوم، مناديل الويتش هازل، تحاميل، بخاخ أعشاب، وسادة طبية، وحوض مقعدة. الدفع عند الاستلام داخل السعودية.",
+    "نسيم للجمال: سيروم وكريم وباتش + جامي حلال. 199 / 279 / 388 د.م. الدفع عند الاستلام فالمغرب. ومجموعة العناية الحساسة.",
 };
 
 const trustItems = [
@@ -90,11 +90,11 @@ export default function HomePage() {
     <>
       <section className="bg-brand-800 text-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1 px-4 py-2 text-center text-xs sm:flex-row sm:gap-3 sm:text-sm">
-          <span>توصيل داخل السعودية</span>
+          <span>نسيم للجمال · المغرب</span>
+          <span className="hidden text-white/40 sm:inline">-</span>
+          <span>199 / 279 / 388 د.م.</span>
           <span className="hidden text-white/40 sm:inline">-</span>
           <span>الدفع عند الاستلام</span>
-          <span className="hidden text-white/40 sm:inline">-</span>
-          <span>تغليف خاص بدون تفاصيل محرجة</span>
         </div>
       </section>
 
@@ -102,30 +102,30 @@ export default function HomePage() {
         <div className="absolute inset-x-0 top-16 h-32 bg-[radial-gradient(circle_at_center,rgba(63,107,90,0.18),transparent_65%)]" />
         <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
           <div className="space-y-7">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand shadow-sm ring-1 ring-brand/10">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#7a4b2a] shadow-sm ring-1 ring-[#c9a27a]/30">
               <ShieldCheck className="h-4 w-4" />
-              علامة عالمية متخصصة في علاج البواسير
+              نسيم للجمال · 6 منتجات · المغرب
             </div>
 
             <div className="space-y-4">
               <h1 className="text-4xl font-extrabold leading-tight text-gray-950 sm:text-5xl lg:text-6xl">
-                تخلّص من البواسير
-                <span className="block text-brand">بحلول متكاملة مُثبتة علمياً</span>
+                الشعر، البشرة، العين
+                <span className="block text-[#7a4b2a]">علبة صيدلية، خلّصي عند الباب</span>
               </h1>
               <p className="max-w-xl text-lg leading-8 text-gray-600">
-                نسيم يقدّم 9 منتجات متخصصة: علاج فوري بالكيتوزان، دعم للأوردة بالديوسمين والكركمين، وقاية بالألياف، عناية يومية، وراحة للجلوس. اطلب أونلاين بتغليف سري والدفع عند الاستلام.
+                ثلاث مشاكل، حلّين لكل وحدة: موضعي + جامي حلال. سيراميد، كافيين، بيوتين — بلا تبييض وبلا وعود صلع. 199 / 279 / 388 د.م.
               </p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button size="xl" asChild>
                 <Link href="/collection">
-                  تسوّق روتين نسيم
+                  شوفي المجموعة
                   <ArrowLeft className="h-5 w-5" />
                 </Link>
               </Button>
               <Button size="xl" variant="outline" asChild>
-                <Link href="#problems">اختر حسب مشكلتك</Link>
+                <Link href="#beauty">سكالب · بارير · ريغارد</Link>
               </Button>
             </div>
 
@@ -144,23 +144,24 @@ export default function HomePage() {
           <div className="relative">
             <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-100 to-sand shadow-2xl">
               <Image
-                src="/brand/hero-collection.jpg"
-                alt="مجموعة نسيم المتكاملة لعلاج البواسير"
+                src="/images/beauty/system.png"
+                alt="مجموعة نسيم للجمال"
                 fill
+                unoptimized
                 className="object-cover"
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-900/35 via-transparent to-transparent" />
               <div className="absolute bottom-5 right-5 rounded-2xl bg-white/95 p-4 shadow-lg backdrop-blur">
-                <p className="text-sm font-bold text-gray-950">مثلث الراحة من نسيم</p>
-                <p className="mt-1 text-xs text-gray-500">تبريد + دعم + عناية يومية</p>
+                <p className="text-sm font-bold text-gray-950">نسيم للجمال</p>
+                <p className="mt-1 text-xs text-gray-500">سكالب · بارير · ريغارد</p>
               </div>
             </div>
 
             <div className="absolute -left-2 top-8 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-100 sm:-left-8">
               <Package className="mb-2 h-6 w-6 text-brand" />
-              <p className="text-sm font-bold text-gray-950">تغليف خاص</p>
-              <p className="text-xs text-gray-500">بدون تفاصيل محرجة</p>
+              <p className="text-sm font-bold text-gray-950">علبة صيدلية</p>
+              <p className="text-xs text-gray-500">تتحلّ قدام العائلة</p>
             </div>
 
             <div className="absolute -right-2 bottom-8 rounded-2xl bg-white p-4 shadow-xl ring-1 ring-gray-100 sm:-right-8">
@@ -232,16 +233,53 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="beauty" className="bg-[#f7f3ef] py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="mb-3 text-sm font-bold tracking-[0.2em] text-[#c9a27a]">NASEEM BEAUTY · المغرب</p>
+              <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">
+                نسيم للجمال — 6 منتجات
+              </h2>
+              <p className="mt-3 max-w-2xl leading-7 text-gray-600">
+                ثلاث مشاكل: الشعر، البشرة، العين. حلّ موضعي + جامي حلال لكل وحدة.
+                199 / 279 / 388 د.م. · الدفع عند الاستلام فالمغرب.
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/collection">المجموعة كاملة</Link>
+            </Button>
+          </div>
+
+          <div className="mb-10 overflow-hidden rounded-[2rem] shadow-xl">
+            <Image
+              src="/images/beauty/system.png"
+              alt="مجموعة نسيم للجمال"
+              width={1600}
+              height={900}
+              unoptimized
+              className="h-auto w-full object-cover"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {getBeautyProducts().map((product) => (
+              <ProductCard key={product.sku} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="bg-cream py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <p className="mb-3 text-sm font-bold text-brand">الأكثر طلباً</p>
+              <p className="mb-3 text-sm font-bold text-brand">العناية الحساسة</p>
               <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">
                 مجموعة نسيم المتكاملة
               </h2>
               <p className="mt-3 max-w-2xl leading-7 text-gray-600">
-                9 منتجات متخصصة — علاج فوري، دعم داخلي، وقاية، عناية يومية، وراحة. اختر ما يناسبك أو اجمعها في باقة.
+                9 منتجات متخصصة — علاج فوري، دعم داخلي، وقاية، عناية يومية، وراحة.
               </p>
             </div>
             <Button variant="outline" asChild>
@@ -250,17 +288,10 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PRODUCTS.slice(0, 6).map((product) => (
+            {getCareProducts().slice(0, 6).map((product) => (
               <ProductCard key={product.sku} product={product} />
             ))}
           </div>
-          {PRODUCTS.length > 6 && (
-            <div className="mt-8 text-center">
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/collection">عرض جميع المنتجات ({PRODUCTS.length})</Link>
-              </Button>
-            </div>
-          )}
         </div>
       </section>
 

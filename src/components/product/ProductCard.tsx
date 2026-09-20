@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { useMarketLine } from "@/hooks/useMarketLine";
+import { lineHref } from "@/lib/market";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -15,11 +17,14 @@ interface ProductCardProps {
 
 export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
   const isEn = lang === "en";
+  const { line } = useMarketLine();
+  const productLine = product.line === "beauty" ? "beauty" : "care";
+  const href = lineHref(`/${lang}/products/${product.slug}`, productLine || line);
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
       {/* Image */}
-      <Link href={`/${lang}/products/${product.slug}`} className="block">
+      <Link href={href} className="block">
         <div className="relative aspect-square bg-cream overflow-hidden">
           <Image
             src={product.image}
@@ -47,7 +52,7 @@ export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
             {isEn ? "+2,400 Orders" : "+2,400 طلب"}
           </span>
         </div>
-        <Link href={`/${lang}/products/${product.slug}`}>
+        <Link href={href}>
           <h3 className="font-semibold text-gray-900 text-xs sm:text-sm leading-snug hover:text-brand transition-colors line-clamp-2">
             {isEn && product.nameEn ? product.nameEn : product.name}
           </h3>

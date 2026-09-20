@@ -18,6 +18,7 @@ const checkoutFields = z.object({
   name: z.string().min(2, "الاسم يجب أن يكون حرفين على الأقل").trim(),
   phone: z.string().trim().min(6, "أدخل رقم هاتف صحيح"),
   city: z.string().trim().min(2, "أدخل المدينة"),
+  address: z.string().trim().min(4, "أدخل العنوان بالتفصيل"),
   notes: z.string().trim().optional(),
 });
 

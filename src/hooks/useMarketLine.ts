@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import {
   DEFAULT_MARKET_LINE,
+  applyMarketLineToDocument,
   detectMarketLine,
   MARKET_LINE_EVENT,
   MARKET_LINE_KEY,
@@ -16,14 +17,18 @@ export function useMarketLine() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const next = detectMarketLine(window.location.search);
+    const next = detectMarketLine(window.location.search, window.location.pathname);
     setLine(next);
     window.sessionStorage.setItem(MARKET_LINE_KEY, next);
+    applyMarketLineToDocument(next);
     setReady(true);
 
     const onChange = (event: Event) => {
       const detail = (event as CustomEvent<MarketLine>).detail;
-      if (detail === "care" || detail === "beauty") setLine(detail);
+      if (detail === "care" || detail === "beauty") {
+        setLine(detail);
+        applyMarketLineToDocument(detail);
+      }
     };
     window.addEventListener(MARKET_LINE_EVENT, onChange);
     return () => window.removeEventListener(MARKET_LINE_EVENT, onChange);

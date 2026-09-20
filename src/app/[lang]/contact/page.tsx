@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   description: "تواصل مع فريق نسيم — نحن هنا للمساعدة",
 };
 
-export default function ContactPage() {
+export default function ContactPage({ params }: { params: { lang: string } }) {
+  const lang = params.lang === "en" ? "en" : "ar";
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-14">
       <div className="text-center mb-12">
@@ -39,7 +40,7 @@ export default function ContactPage() {
             title: "تتبع الطلب",
             value: "تتبع طلبك مباشرة",
             desc: "ادخل رقم طلبك للاطلاع على حالته",
-            href: "/track",
+            href: `/${lang}/track`,
             cta: "تتبع الطلب",
           },
         ].map((item) => (

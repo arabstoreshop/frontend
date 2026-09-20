@@ -44,6 +44,15 @@
   }
 }
 
+/* Hard-hide the inactive catalog before React hydrates (blocking script sets data-line). */
+html:not([data-line]) [data-market="beauty"],
+html[data-line="care"] [data-market="beauty"] {
+  display: none !important;
+}
+html[data-line="beauty"] [data-market="care"] {
+  display: none !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

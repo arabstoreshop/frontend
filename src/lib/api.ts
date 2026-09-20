@@ -27,9 +27,13 @@ async function apiFetch(path: string, init: RequestInit = {}, attempts = 2): Pro
     try {
       const res = await fetch(joinUrl(path), {
         ...init,
+        redirect: "manual",
         signal: controller.signal,
         cache: "no-store",
       });
+      if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+        return res;
+      }
       if (res.status >= 500 && i < attempts - 1) {
         await new Promise((r) => setTimeout(r, 400 * (i + 1)));
         continue;
@@ -107,8 +111,10 @@ export async function placeOrder(payload: OrderPayload): Promise<OrderResponse> 
       body: JSON.stringify(payload),
     });
     if (res.ok) return res.json();
+    if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+      return placeOrderOnSheet(payload);
+    }
     const type = res.headers.get("content-type") || "";
-    if (res.status >= 300 && res.status < 400) return placeOrderOnSheet(payload);
     if (!type.includes("json")) return placeOrderOnSheet(payload);
     const error = await res.json().catch(() => null);
     throw new Error(errorFromBody(error, "حدث خطأ في إرسال الطلب، يرجى المحاولة مجدداً"));

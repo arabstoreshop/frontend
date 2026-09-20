@@ -24,9 +24,28 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = getProductBySlug(params.slug);
   if (!product) return { title: "منتج غير موجود" };
+  const isBeauty = product.line === "beauty";
+  const title = `${product.name} | نسيم`;
+  const description = isBeauty
+    ? `${product.description} 199 / 279 / 388 د.م. الدفع عند الاستلام فالمغرب.`
+    : `${product.description} 199 / 279 / 349 ريال. الدفع عند الاستلام داخل السعودية.`;
+  const image = product.image;
   return {
-    title: `${product.name} | نسيم`,
-    description: product.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      locale: isBeauty ? "ar_MA" : "ar_SA",
+      type: "website",
+      images: [{ url: image, width: 1200, height: 630, alt: product.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 
@@ -45,9 +64,9 @@ export default function ProductPage({ params }: Props) {
       <MarketSync line="care" />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-        <Link href={`/${params.lang}`} className="hover:text-brand transition-colors">الرئيسية</Link>
+        <Link href={`/${params.lang}?line=care`} className="hover:text-brand transition-colors">الرئيسية</Link>
         <ArrowRight className="w-3.5 h-3.5" />
-        <Link href={`/${params.lang}/collection`} className="hover:text-brand transition-colors">المنتجات</Link>
+        <Link href={`/${params.lang}/collection?line=care`} className="hover:text-brand transition-colors">المنتجات</Link>
         <ArrowRight className="w-3.5 h-3.5" />
         <span className="text-gray-700 font-medium">{product.name}</span>
       </nav>

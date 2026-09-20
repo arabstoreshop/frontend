@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { pathLang, withLang } from "@/lib/lang";
+import { lineHref } from "@/lib/market";
 import { formatPrice } from "@/lib/utils";
 import { PRODUCTS, catalogLine } from "@/lib/products";
 import { useCartStore } from "@/store/cart";
@@ -15,12 +16,13 @@ import { useCartStore } from "@/store/cart";
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, openCheckout, getTotal } = useCartStore();
   const pathname = usePathname();
-  const collectionHref = withLang(pathLang(pathname), "/collection");
+  const lang = pathLang(pathname);
   const mainItems = items.filter((i) => !i.isUpsell);
   const total = getTotal();
   const currency = mainItems.some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
 
   const cartLine = currency === "MAD" ? "beauty" : "care";
+  const collectionHref = lineHref(withLang(lang, "/collection"), cartLine);
   const cartSkus = new Set(items.map((i) => i.sku));
   const crossSells = PRODUCTS.filter(
     (p) => !cartSkus.has(p.sku) && catalogLine(p.sku) === cartLine
@@ -131,7 +133,7 @@ export function CartDrawer() {
                           </div>
                           <Dialog.Close asChild>
                             <Link
-                              href={withLang(pathLang(pathname), `/products/${product.slug}`)}
+                              href={lineHref(withLang(lang, `/products/${product.slug}`), cartLine)}
                               className="text-xs text-brand border border-brand rounded-lg px-2.5 py-1 hover:bg-brand hover:text-white transition-colors whitespace-nowrap"
                             >
                               عرض

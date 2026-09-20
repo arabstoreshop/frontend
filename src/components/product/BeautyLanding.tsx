@@ -185,7 +185,7 @@ export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang
                     <h2 className="text-3xl font-extrabold text-gray-950">{pair.name}</h2>
                     <p className="text-lg leading-8 text-gray-600">{landing.pairingPitch}</p>
                     <Link
-                      href={withLang(lang, `/products/${pair.slug}`)}
+                      href={withLang(lang, `/products/${pair.slug}?line=beauty`)}
                       className="inline-flex w-fit rounded-full bg-[#2a0f16] px-6 py-3 font-bold text-white"
                     >
                       شوفي العلبة

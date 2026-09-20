@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
   <title>Profit calculator — COD</title>
   <style>
     :root { --bg:#0f1412; --card:#161d1a; --line:#2a3a34; --mut:#9cb3a8; --dim:#6f857c; --acc:#3d8f6b; --ok:#7dcca8; --txt:#e8efe9; }
@@ -40,10 +41,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" id="login" style="max-width:420px;min-height:80vh;display:flex;flex-direction:column;justify-content:center">
+    <p class="kicker">Naseem admin</p>
+    <h1>Login</h1>
+    <p class="note">هاد الحساب خاصو كلمة السر.</p>
+    <label><span>Password</span><div class="inp"><input id="pw" type="password" /></div></label>
+    <p id="pwerr" class="note" style="color:#f0a8a8;display:none">كلمة السر غالطة.</p>
+    <button class="chip on" style="margin-top:16px" onclick="tryLogin()">دخول</button>
+  </div>
+  <div class="wrap" id="app" hidden>
     <p class="kicker">COD admin</p>
-    <h1>Profit calculator</h1>
-    <p class="note">Works without login. Fees prefills from COD Network + Digylog Morocco. Change any field.</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h1>Profit calculator</h1>
+      <button class="chip" onclick="sessionStorage.removeItem('naseem-admin-ok');location.reload()">خروج</button>
+    </div>
+    <p class="note">Fees prefills from COD Network + Digylog Morocco. Change any field.</p>
     <div class="grid four" id="stats"></div>
     <div class="mkts" id="markets"></div>
     <p class="note" id="mnote"></p>
@@ -190,8 +202,26 @@ function renderOut(){
   }
 }
 function setSec(s){ S.sec=s; render(); }
-applyMarket();
-render();
+const HASH='3b1cb34d5e991609e4d2daff239e5d5a80d63e5a3e629e4102e6d637f2969d9a';
+async function sha(v){
+  const b=new TextEncoder().encode(v);
+  const d=await crypto.subtle.digest('SHA-256',b);
+  return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function tryLogin(){
+  const ok=(await sha(document.getElementById('pw').value))===HASH;
+  if(!ok){ document.getElementById('pwerr').style.display='block'; return; }
+  sessionStorage.setItem('naseem-admin-ok','1');
+  showApp();
+}
+function showApp(){
+  document.getElementById('login').hidden=true;
+  document.getElementById('app').hidden=false;
+  applyMarket();
+  render();
+}
+document.getElementById('pw').addEventListener('keydown',e=>{ if(e.key==='Enter') tryLogin(); });
+if(sessionStorage.getItem('naseem-admin-ok')==='1') showApp();
 </script>
 </body>
 </html>

@@ -81,7 +81,6 @@
     </div>
   </div>
 <script>
-const SAR = 3.75;
 const MARKETS = [
   {id:'KSA', name:'Saudi Arabia', ccy:'USD', toUsd:1, provider:'COD Network', shipD:4.99, shipR:2.99, fulfill:0, cod:0.05, cc:{cosmetic:{lead:.5,c:2,d:3},gadget:{lead:.5,c:1,d:2}}},
   {id:'UAE', name:'UAE', ccy:'USD', toUsd:1, provider:'COD Network', shipD:5.99, shipR:4.99, fulfill:0, cod:0.05, cc:{cosmetic:{lead:.5,c:2,d:3},gadget:{lead:.5,c:1,d:2}}},
@@ -104,27 +103,28 @@ const MARKETS = [
 const S = {
   m:'KSA', cat:'cosmetic', zone:'mix', sec:'be',
   leads:1000, cpl:3, conf:45, del:65,
-  aovSar:199, aovUsd:53.07, pieces:1.4, cogs:4,
+  aovUsd:53.07, pieces:1.4, cogs:4,
   feeLead:.5, feeC:2, feeD:3, feeR:2.99, feeF:0, feeShip:4.99, cod:5
 };
 function mkt(){ return MARKETS.find(x=>x.id===S.m); }
 function money(n){ const s=n<0?'-':''; return s+'$'+Math.abs(n).toFixed(2); }
 function applyMarket(){
-  const m=mkt(), cc=m.cc[S.cat];
-  S.feeLead=cc.lead; S.feeC=cc.c; S.feeD=cc.d; S.feeR=m.shipR; S.feeF=m.fulfill; S.cod=m.cod*100;
-  if(m.zones){ const z=m.zones.find(x=>x.id===S.zone)||m.zones[m.zones.length-1]; S.feeShip=z.s; }
-  else S.feeShip=m.shipD;
+  const m=mkt(), cc=m.cc[S.cat], u=m.toUsd;
+  S.feeLead=+(cc.lead*u).toFixed(2); S.feeC=+(cc.c*u).toFixed(2); S.feeD=+(cc.d*u).toFixed(2);
+  S.feeR=+(m.shipR*u).toFixed(2); S.feeF=+(m.fulfill*u).toFixed(2); S.cod=m.cod*100;
+  if(m.zones){ const z=m.zones.find(x=>x.id===S.zone)||m.zones[m.zones.length-1]; S.feeShip=+(z.s*u).toFixed(2); }
+  else S.feeShip=+(m.shipD*u).toFixed(2);
 }
 function calc(){
-  const m=mkt(), u=m.toUsd;
+  const m=mkt();
   const leads=+S.leads, cpl=+S.cpl, cr=S.conf/100, dr=S.del/100;
   const aov=+S.aovUsd, pcs=+S.pieces, cogs=+S.cogs;
   const confirmed=leads*cr, shipped=confirmed, delivered=confirmed*dr, returned=Math.max(0,shipped-delivered);
-  const ad=leads*cpl, ccL=leads*(S.feeLead*u);
+  const ad=leads*cpl, ccL=leads*(+S.feeLead);
   let ccC, ccD;
-  if(m.replace){ ccC=returned*(S.feeC*u); ccD=delivered*(S.feeD*u); }
-  else { ccC=confirmed*(S.feeC*u); ccD=delivered*(S.feeD*u); }
-  const ful=shipped*(S.feeF*u), shD=delivered*(S.feeShip*u), shR=returned*(S.feeR*u);
+  if(m.replace){ ccC=returned*(+S.feeC); ccD=delivered*(+S.feeD); }
+  else { ccC=confirmed*(+S.feeC); ccD=delivered*(+S.feeD); }
+  const ful=shipped*(+S.feeF), shD=delivered*(+S.feeShip), shR=returned*(+S.feeR);
   const cog=shipped*pcs*cogs, rev=delivered*aov, cod=rev*(S.cod/100);
   const ops=ccL+ccC+ccD+ful+shD+shR+cog+cod, tot=ad+ops, profit=rev-tot;
   const other=leads?ops/leads:0, rpl=leads?rev/leads:0, maxCpl=rpl-other;
@@ -141,31 +141,30 @@ function bind(id, key, extra){
 function render(){
   const m=mkt();
   document.getElementById('stats').innerHTML = [
-    ['AOV SAR', S.aovSar.toFixed(2)+' SAR', 'type your AOV'],
-    ['AOV USD', money(S.aovUsd), '÷ 3.75'],
+    ['AOV', money(S.aovUsd), 'USD'],
     ['Avg pieces', S.pieces, 'units in that AOV'],
-    ['Market', m.name, m.provider]
+    ['Market', m.name, m.provider],
+    ['P&L', 'USD', 'all fees in $']
   ].map(([a,b,c])=>`<div class="card stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join('');
   document.getElementById('markets').innerHTML = MARKETS.map(x=>`<button class="chip ${x.id===S.m?'on':''}" onclick="S.m='${x.id}';applyMarket();render()">${x.id==='MA'?'Morocco':x.id}</button>`).join('');
-  document.getElementById('mnote').textContent = 'Fees from '+m.provider+' · '+m.name+'. P&L in USD'+(m.ccy==='MAD'?' (DH ÷ 10)':'')+'.';
-  document.getElementById('unitlab').textContent = m.ccy==='MAD'?'(DH)': '($)';
+  document.getElementById('mnote').textContent = 'Fees from '+m.provider+' · '+m.name+'. All numbers in USD.';
+  document.getElementById('unitlab').textContent = '($)';
   document.getElementById('vars').innerHTML =
     field('leads','Leads')+field('cpl','Cost per lead','$')+
     field('conf','Confirmation rate','%')+field('del','Delivery rate','%','of confirmed')+
-    field('aovSar','AOV SAR','SAR')+field('aovUsd','AOV USD','$','SAR ÷ 3.75')+
+    field('aovUsd','AOV','$')+
     field('pieces','Avg pieces / order','','units that made this AOV')+field('cogs','Product cost / piece','$')+
     `<label><span>Category</span><div class="seg" style="margin:0">${['cosmetic','gadget'].map(c=>`<button class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';applyMarket();render()">${c}</button>`).join('')}</div></label>`;
-  document.getElementById('zones').innerHTML = m.zones ? `<label style="margin-bottom:12px"><span>Digylog city</span><select id="zone">${m.zones.map(z=>`<option value="${z.id}" ${S.zone===z.id?'selected':''}>${z.l} — ${z.s} DH</option>`).join('')}</select></label>` : '';
+  document.getElementById('zones').innerHTML = m.zones ? `<label style="margin-bottom:12px"><span>Digylog city</span><select id="zone">${m.zones.map(z=>`<option value="${z.id}" ${S.zone===z.id?'selected':''}>${z.l} — $${(z.s*m.toUsd).toFixed(2)}</option>`).join('')}</select></label>` : '';
   document.getElementById('fees').innerHTML =
-    field('feeLead','Per lead (call center)', m.ccy==='MAD'?'DH':'$')+
-    field('feeC','Per confirmed lead', m.ccy==='MAD'?'DH':'$', m.replace?'6 DH if not delivered':'')+
-    field('feeD','Per delivered order', m.ccy==='MAD'?'DH':'$', m.replace?'becomes 10 DH if delivered':'extra CC on delivery')+
-    field('feeR','Per return', m.ccy==='MAD'?'DH':'$')+
-    field('feeF','Per fulfilled (left warehouse)', m.ccy==='MAD'?'DH':'$')+
-    field('feeShip','Shipping delivered', m.ccy==='MAD'?'DH':'$')+
+    field('feeLead','Per lead (call center)', '$')+
+    field('feeC','Per confirmed lead', '$', m.replace?'$0.60 if not delivered':'')+
+    field('feeD','Per delivered order', '$', m.replace?'$1.00 if delivered':'extra CC on delivery')+
+    field('feeR','Per return', '$')+
+    field('feeF','Per fulfilled (left warehouse)', '$')+
+    field('feeShip','Shipping delivered', '$')+
     field('cod','COD fee','%');
   ['leads','cpl','conf','del','pieces','cogs','feeLead','feeC','feeD','feeR','feeF','feeShip','cod'].forEach(k=>bind(k,k));
-  bind('aovSar','aovSar', ()=>{ S.aovUsd=Math.round(S.aovSar/SAR*100)/100; const u=document.getElementById('aovUsd'); if(u) u.value=S.aovUsd; });
   bind('aovUsd','aovUsd');
   const z=document.getElementById('zone');
   if(z) z.onchange=()=>{ S.zone=z.value; applyMarket(); render(); };

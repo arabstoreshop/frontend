@@ -20,9 +20,11 @@ export function CartDrawer() {
   const total = getTotal();
   const currency = mainItems.some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
 
-  // Cross-sells: products not in cart
+  const cartLine = currency === "MAD" ? "beauty" : "care";
   const cartSkus = new Set(items.map((i) => i.sku));
-  const crossSells = PRODUCTS.filter((p) => !cartSkus.has(p.sku)).slice(0, 2);
+  const crossSells = PRODUCTS.filter(
+    (p) => !cartSkus.has(p.sku) && catalogLine(p.sku) === cartLine
+  ).slice(0, 2);
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && closeCart()}>
@@ -124,7 +126,7 @@ export function CartDrawer() {
                               {product.name}
                             </p>
                             <p className="text-xs text-brand font-bold">
-                              {formatPrice(199, "ar", product.currency === "MAD" ? "MAD" : "SAR")}
+                              {formatPrice(199, "ar", currency)}
                             </p>
                           </div>
                           <Dialog.Close asChild>
@@ -154,13 +156,13 @@ export function CartDrawer() {
               <p className="text-xs text-gray-400 text-center">الدفع عند الاستلام • شحن مجاني</p>
               <Button
                 size="lg"
-                className="w-full text-base"
+                className="min-h-[44px] w-full text-base"
                 onClick={() => {
                   closeCart();
                   openCheckout();
                 }}
               >
-                إتمام الطلب
+                إتمام الطلب · {formatPrice(total, "ar", currency)}
               </Button>
             </div>
           )}

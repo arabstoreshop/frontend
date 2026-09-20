@@ -79,7 +79,7 @@ export function Header() {
 
           <button
             onClick={openCart}
-            className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-brand-50 transition-colors text-gray-700 hover:text-brand"
+            className="relative flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand"
             aria-label="سلة التسوق"
           >
             <ShoppingCart className="w-5 h-5" />
@@ -91,7 +91,7 @@ export function Header() {
           </button>
 
           <button
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-brand-50 transition-colors text-gray-700"
+            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-brand-50 md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="القائمة"
           >

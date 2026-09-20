@@ -11,14 +11,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const lang of langs) {
     for (const path of staticPaths) {
       entries.push({
-        url: `${SITE}/${lang}${path}`,
+        url: path === "" ? `${SITE}/${lang}/` : `${SITE}/${lang}${path}/`,
         changeFrequency: path === "" ? "daily" : "weekly",
         priority: path === "" ? 1 : 0.7,
       });
     }
     for (const product of PRODUCTS) {
       entries.push({
-        url: `${SITE}/${lang}/products/${product.slug}`,
+        url: `${SITE}/${lang}/products/${product.slug}/`,
         changeFrequency: "weekly",
         priority: 0.8,
       });

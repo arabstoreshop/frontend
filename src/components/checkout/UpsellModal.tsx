@@ -7,15 +7,17 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
-import { PRODUCTS, UPSELL_PRICE } from "@/lib/products";
+import { catalogLine, PRODUCTS, UPSELL_PRICE } from "@/lib/products";
 
-// Upsell suggestion: pick a product different from the main one
 function getUpsellProduct(mainSku: string | undefined) {
-  return PRODUCTS.find((p) => p.sku !== mainSku) ?? PRODUCTS[0];
+  const line = mainSku ? catalogLine(mainSku) : "care";
+  const pool = PRODUCTS.filter((p) => catalogLine(p.sku) === line);
+  return pool.find((p) => p.sku !== mainSku) ?? pool[0] ?? PRODUCTS[0];
 }
 
 interface UpsellModalProps {
   mainSku: string | undefined;
+  currency?: "SAR" | "MAD";
   onAccept: (upsellSku: string) => void;
   onDecline: () => void;
   isSubmitting: boolean;
@@ -23,8 +25,9 @@ interface UpsellModalProps {
 
 const COUNTDOWN_SECONDS = 12;
 
-export function UpsellModal({ mainSku, onAccept, onDecline, isSubmitting }: UpsellModalProps) {
+export function UpsellModal({ mainSku, currency = "SAR", onAccept, onDecline, isSubmitting }: UpsellModalProps) {
   const upsell = getUpsellProduct(mainSku);
+  const saveAmount = 199 - UPSELL_PRICE;
   const [seconds, setSeconds] = useState(COUNTDOWN_SECONDS);
 
   useEffect(() => {
@@ -88,13 +91,13 @@ export function UpsellModal({ mainSku, onAccept, onDecline, isSubmitting }: Upse
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-lg font-bold text-brand">
-                      {formatPrice(UPSELL_PRICE)}
+                      {formatPrice(UPSELL_PRICE, "ar", currency)}
                     </span>
                     <span className="text-xs text-gray-400 line-through">
-                      {formatPrice(199)}
+                      {formatPrice(199, "ar", currency)}
                     </span>
                     <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">
-                      وفّر 100 ريال
+                      وفّر {formatPrice(saveAmount, "ar", currency)}
                     </span>
                   </div>
                 </div>
@@ -103,7 +106,7 @@ export function UpsellModal({ mainSku, onAccept, onDecline, isSubmitting }: Upse
               <div className="mt-4 space-y-2.5">
                 <Button
                   size="lg"
-                  className="w-full text-base"
+                  className="min-h-[44px] w-full text-base"
                   onClick={() => onAccept(upsell.sku)}
                   loading={isSubmitting}
                   disabled={isSubmitting}

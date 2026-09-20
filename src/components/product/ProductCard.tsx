@@ -5,32 +5,16 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
-import { useCartStore } from "@/store/cart";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
-  showAddToCart?: boolean;
   lang?: "ar" | "en";
 }
 
-export function ProductCard({ product, showAddToCart = true, lang = "ar" }: ProductCardProps) {
-  const { addItem, openCart } = useCartStore();
+export function ProductCard({ product, lang = "ar" }: ProductCardProps) {
   const isEn = lang === "en";
-
-  const handleQuickAdd = () => {
-    addItem({
-      sku: product.sku,
-      slug: product.slug,
-      name: isEn && product.nameEn ? product.nameEn : product.name,
-      image: product.image,
-      quantity: 1,
-      isUpsell: false,
-    });
-    openCart();
-  };
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
@@ -60,7 +44,7 @@ export function ProductCard({ product, showAddToCart = true, lang = "ar" }: Prod
             ))}
           </div>
           <span className="text-[9px] sm:text-[11px] font-semibold text-gray-400">
-            {isEn ? "+1200 Orders" : "+1200 طلب"}
+            {isEn ? "+2,400 Orders" : "+2,400 طلب"}
           </span>
         </div>
         <Link href={`/${lang}/products/${product.slug}`}>

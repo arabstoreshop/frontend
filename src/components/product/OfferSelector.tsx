@@ -43,7 +43,7 @@ export function OfferSelector({ product }: OfferSelectorProps) {
           <button
             key={offer.qty}
             onClick={() => setSelectedQty(offer.qty)}
-            className={`w-full text-start flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-150 ${
+            className={`min-h-[44px] w-full text-start flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-150 ${
               selectedQty === offer.qty
                 ? "border-brand bg-brand-50"
                 : "border-gray-200 hover:border-brand-300 bg-white"
@@ -86,17 +86,21 @@ export function OfferSelector({ product }: OfferSelectorProps) {
         ))}
       </div>
 
-      {/* CTA */}
-      <Button size="xl" className="w-full text-lg" onClick={handleAddToCart}>
-        أضف إلى السلة — {formatPrice(selectedOffer.price, "ar", currency)}
+      <Button size="xl" className="hidden min-h-[44px] w-full text-lg md:inline-flex" onClick={handleAddToCart}>
+        اطلب الآن · {formatPrice(selectedOffer.price, "ar", currency)}
       </Button>
 
       <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
-        <span>💳 الدفع عند الاستلام</span>
+        <span>الدفع عند الاستلام</span>
         <span>·</span>
-        <span>{product.currency === "MAD" ? "📦 توصيل المغرب" : "📦 شحن سريع"}</span>
-        <span>·</span>
-        <span>🔒 تغليف أنيق</span>
+        <span>{product.currency === "MAD" ? "توصيل المغرب" : "تغليف خاص"}</span>
+      </div>
+
+      <div className="fixed bottom-0 inset-x-0 z-50 border-t border-gray-100 bg-white p-3 pb-[max(12px,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] md:hidden">
+        <Button size="xl" className="min-h-[44px] w-full text-lg" onClick={handleAddToCart}>
+          اطلب الآن · {formatPrice(selectedOffer.price, "ar", currency)}
+        </Button>
+        <p className="mt-1 text-center text-[11px] text-gray-400">الدفع عند الاستلام · تغليف خاص</p>
       </div>
     </div>
   );

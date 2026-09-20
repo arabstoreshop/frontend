@@ -2,6 +2,7 @@ import { CheckCircle, Clock, Heart, Shield, Star, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { MarketSync } from "@/components/home/MarketSync";
 import { OfferSelector } from "@/components/product/OfferSelector";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -9,7 +10,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { getBeautyLanding } from "@/lib/beauty-landing";
 import { withLang } from "@/lib/lang";
 import { getCrossells, getProductBySlug } from "@/lib/products";
-import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang?: string }) {
@@ -20,6 +20,7 @@ export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang
 
   return (
     <div className="bg-[#fbf7f2]">
+      <MarketSync line="beauty" />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <p className="mb-4 text-xs font-bold tracking-[0.25em] text-[#c9a27a]">NASEEM BEAUTY · المغرب</p>
 
@@ -41,7 +42,7 @@ export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang
                   <Star key={index} className="h-4 w-4 fill-current" />
                 ))}
               </div>
-              +1200 طلب · الدفع عند الاستلام
+              +2,400 طلب · 4.8/5 · الدفع عند الاستلام
             </div>
             <ul className="space-y-2.5">
               {product.benefits.map((benefit) => (
@@ -51,7 +52,7 @@ export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang
                 </li>
               ))}
             </ul>
-            <div id="buy" className="rounded-3xl border border-[#e8d8c4] bg-white p-5 shadow-sm sm:p-6">
+            <div id="buy" className="rounded-3xl border border-[#e8d8c4] bg-white p-5 shadow-sm sm:p-6 mb-24 md:mb-0">
               <p className="mb-4 text-sm font-bold text-gray-900">199 / 279 / 388 د.م. · الأكثر طلباً: جوج</p>
               <OfferSelector product={product} />
             </div>
@@ -256,21 +257,6 @@ export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang
             </div>
           </section>
         )}
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#e8d8c4] bg-white/95 p-3 shadow-[0_-8px_30px_rgba(42,15,22,0.08)] backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-          <div className="hidden min-w-0 sm:block">
-            <p className="truncate font-bold text-gray-950">{product.name}</p>
-            <p className="text-sm font-bold text-[#7a4b2a]">{formatPrice(199, "ar", "MAD")} · جوج بـ 279</p>
-          </div>
-          <Link
-            href="#buy"
-            className="flex-1 rounded-full bg-[#2a0f16] px-6 py-3 text-center text-lg font-bold text-white sm:flex-none sm:px-10"
-          >
-            أطلبي — خلّصي عند الباب
-          </Link>
-        </div>
       </div>
     </div>
   );

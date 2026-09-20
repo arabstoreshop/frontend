@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MarketSync } from "@/components/home/MarketSync";
 import { BeautyLanding } from "@/components/product/BeautyLanding";
 import { OfferSelector } from "@/components/product/OfferSelector";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -40,7 +41,8 @@ export default function ProductPage({ params }: Props) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 pb-28 md:pb-10">
+      <MarketSync line="care" />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
         <Link href={`/${params.lang}`} className="hover:text-brand transition-colors">الرئيسية</Link>
@@ -423,22 +425,6 @@ export default function ProductPage({ params }: Props) {
           </div>
         </div>
       )}
-
-      {/* Sticky Buy Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 animate-in slide-in-from-bottom duration-500">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="hidden sm:block">
-            <h3 className="font-bold text-gray-900 line-clamp-1">{product.name}</h3>
-            <p className="text-sm text-brand font-bold">199 ريال للقطعة</p>
-          </div>
-          <Link 
-            href="#buy" 
-            className="flex-1 sm:flex-none w-full sm:w-64 flex items-center justify-center bg-brand text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-lg hover:bg-brand-700 transition-colors"
-          >
-            أضف للسلة
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

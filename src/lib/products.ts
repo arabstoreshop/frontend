@@ -579,10 +579,8 @@ export function getProductBySlug(slug: string): Product | undefined {
 
 export function getCrossells(currentSku: string): Product[] {
   const current = getProductBySku(currentSku);
-  const rest = PRODUCTS.filter((p) => p.sku !== currentSku);
-  const same = rest.filter((p) => p.line === current?.line);
-  const other = rest.filter((p) => p.line !== current?.line);
-  return [...same, ...other].slice(0, 3);
+  const line = current?.line === "beauty" ? "beauty" : "care";
+  return PRODUCTS.filter((p) => p.sku !== currentSku && p.line === line).slice(0, 3);
 }
 
 export function getBeautyProducts(): Product[] {

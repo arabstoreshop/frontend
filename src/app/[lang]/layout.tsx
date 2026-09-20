@@ -13,21 +13,19 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
   title: {
-    default: "نسيم | جمال وعناية — Naseem Beauty",
+    default: "نسيم | عناية حساسة — Naseem",
     template: "%s | Naseem",
   },
   description:
-    "نسيم للجمال: سكالب، بارير، ريغارد — موضعي + جامي حلال. الدفع عند الاستلام فالمغرب. ومجموعة العناية الحساسة.",
+    "نسيم للعناية الحساسة: 9 منتجات، 199 / 279 / 349 ريال، الدفع عند الاستلام داخل السعودية. ولمسار الجمال المغربي: ?line=beauty.",
   keywords: [
     "Naseem",
     "نسيم",
-    "hemorrhoid treatment",
-    "علاج البواسير",
+    "عناية حساسة",
+    "الدفع عند الاستلام",
+    "السعودية",
     "chitosan gel",
     "diosmin",
-    "psyllium fiber",
-    "global wellness brand",
-    "Saudi Arabia",
   ],
   metadataBase: new URL("https://naseem.beauty"),
   icons: {
@@ -37,9 +35,8 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "Naseem | Global Hemorrhoid Care",
-    description:
-      "One problem. Nine solutions. Naseem offers a complete hemorrhoid care system — from instant relief to long-term prevention.",
+    title: "نسيم | عناية حساسة",
+    description: "9 منتجات للعناية الحساسة — 199 / 279 / 349 ريال. الدفع عند الاستلام داخل السعودية.",
     url: "https://naseem.beauty",
     siteName: "Naseem",
     locale: "ar_SA",
@@ -50,14 +47,14 @@ export const metadata: Metadata = {
         url: "/brand/hero-collection.jpg",
         width: 1200,
         height: 630,
-        alt: "Naseem hemorrhoid care collection",
+        alt: "مجموعة نسيم للعناية الحساسة",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Naseem | Global Hemorrhoid Care",
-    description: "Complete hemorrhoid care — 9 specialized products, one trusted brand.",
+    title: "نسيم | عناية حساسة",
+    description: "199 / 279 / 349 ريال · الدفع عند الاستلام داخل السعودية.",
     images: ["/brand/hero-collection.jpg"],
   },
   robots: {

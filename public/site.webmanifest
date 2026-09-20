@@ -1,11 +1,13 @@
 {
-  "name": "Naseem — Global Hemorrhoid Care",
-  "short_name": "Naseem",
-  "description": "Complete hemorrhoid care system — 9 specialized products, one trusted global brand.",
-  "start_url": "/ar",
+  "name": "نسيم — عناية حساسة",
+  "short_name": "نسيم",
+  "description": "عناية حساسة. 199 / 279 / 349 ريال. الدفع عند الاستلام في السعودية.",
+  "start_url": "/ar/",
   "display": "standalone",
   "background_color": "#FAF8F3",
   "theme_color": "#3F6B5A",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
       "src": "/favicon.png",

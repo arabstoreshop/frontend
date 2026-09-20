@@ -50,6 +50,8 @@ export interface OrderPayload {
   city?: string;
   address?: string;
   notes?: string;
+  total_sar?: number;
+  products_label?: string;
   items: {
     sku: string;
     quantity: number;

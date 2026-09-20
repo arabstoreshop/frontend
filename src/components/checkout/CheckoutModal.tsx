@@ -15,7 +15,7 @@ import { pingApiHealth, placeOrder } from "@/lib/api";
 import { pathLang, withLang } from "@/lib/lang";
 import { formatPrice, generateEventId } from "@/lib/utils";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/validation";
-import { PRODUCTS, catalogLine } from "@/lib/products";
+import { PRODUCTS, catalogLine, UPSELL_PRICE } from "@/lib/products";
 import { useCartStore } from "@/store/cart";
 import { trackPurchasePixel } from "@/components/pixels/PixelScripts";
 
@@ -83,6 +83,11 @@ export function CheckoutModal() {
         notes: formData.notes || undefined,
         items: orderItems,
         browser_event_id: eventId,
+        total_sar: includeUpsell ? total + UPSELL_PRICE : total,
+        products_label: [
+          ...mainItems.map((i) => `${i.name} x${i.quantity}`),
+          ...(includeUpsell && upsellSku ? [`${upsellSku} x1`] : []),
+        ].join(" | "),
       });
 
       // Fire browser-side pixel events BEFORE navigation
@@ -230,7 +235,7 @@ export function CheckoutModal() {
 
                   {apiDown && (
                     <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg text-sm text-amber-800">
-                      خادم الطلبات ما جاوبش دابا. تقدر تعبّي الفورم، وإلا فشل الإرسال حاول بعد دقيقة.
+                      الخادم المباشر بطيء دابا. أكّد الطلب — غادي يتسجل فسجل الطلبات.
                     </div>
                   )}
                   {apiError && (

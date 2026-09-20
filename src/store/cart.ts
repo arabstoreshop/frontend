@@ -35,10 +35,8 @@ export const useCartStore = create<CartState>()(
         set((state) => {
           const incomingLine = catalogLine(newItem.sku);
           const qty = ([1, 2, 3].includes(newItem.quantity) ? newItem.quantity : 1) as 1 | 2 | 3;
-          const withoutOtherLine = state.items.filter(
-            (i) => i.isUpsell || catalogLine(i.sku) === incomingLine
-          );
-          const rest = withoutOtherLine.filter(
+          const sameLine = state.items.filter((i) => catalogLine(i.sku) === incomingLine);
+          const rest = sameLine.filter(
             (i) => !(i.sku === newItem.sku && i.isUpsell === newItem.isUpsell)
           );
           return {
@@ -75,16 +73,24 @@ export const useCartStore = create<CartState>()(
         return {
           ...current,
           ...saved,
-          items: recomputePrices(saved?.items ?? []),
+          items: recomputePrices(enforceSingleCurrency(saved?.items ?? [])),
         };
       },
     }
   )
 );
 
+function enforceSingleCurrency(items: CartItem[]): CartItem[] {
+  const mains = items.filter((i) => !i.isUpsell);
+  if (mains.length === 0) return [];
+  const line = catalogLine(mains[mains.length - 1].sku);
+  return items.filter((i) => catalogLine(i.sku) === line);
+}
+
 function recomputePrices(items: CartItem[]): CartItem[] {
-  const mainItems = items.filter((i) => !i.isUpsell);
-  const upsellItems = items.filter((i) => i.isUpsell);
+  const singleLine = enforceSingleCurrency(items);
+  const mainItems = singleLine.filter((i) => !i.isUpsell);
+  const upsellItems = singleLine.filter((i) => i.isUpsell);
 
   const pricedMain = mainItems.map((item) => {
     const qty = [1, 2, 3].includes(item.quantity) ? item.quantity : 1;

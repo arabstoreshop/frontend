@@ -11,13 +11,13 @@ export function generateStaticParams() {
   return [{ lang: "ar" }, { lang: "en" }];
 }
 
-export const metadata: Metadata = {
+const arabicLayoutMetadata: Metadata = {
   title: {
     default: "نسيم | عناية حساسة — Naseem",
     template: "%s | Naseem",
   },
   description:
-    "نسيم للعناية الحساسة: 9 منتجات، 199 / 279 / 349 ريال، الدفع عند الاستلام داخل السعودية. ولمسار الجمال المغربي: ?line=beauty.",
+    "نسيم للعناية الحساسة: 9 منتجات، 199 / 279 / 349 ريال، الدفع عند الاستلام داخل السعودية. ولمسار الجمال المغربي: /beauty.",
   keywords: [
     "Naseem",
     "نسيم",
@@ -40,7 +40,6 @@ export const metadata: Metadata = {
     url: "https://naseem.beauty",
     siteName: "Naseem",
     locale: "ar_SA",
-    alternateLocale: "en_US",
     type: "website",
     images: [
       {
@@ -57,11 +56,21 @@ export const metadata: Metadata = {
     description: "199 / 279 / 349 ريال · الدفع عند الاستلام داخل السعودية.",
     images: ["/brand/hero-collection.jpg"],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
+
+export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
+  if (params.lang === "en") {
+    return {
+      ...arabicLayoutMetadata,
+      title: "Naseem",
+      description: "The live Naseem catalog is Arabic. Use /ar/ for the storefront.",
+      robots: { index: false, follow: false },
+      alternates: { canonical: "https://naseem.beauty/ar/" },
+    };
+  }
+  return arabicLayoutMetadata;
+}
 
 export default function LangLayout({
   children,

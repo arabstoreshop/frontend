@@ -30,6 +30,7 @@ export function CheckoutModal() {
   const [apiError, setApiError] = useState<string | null>(null);
 
   const mainItems = items.filter((i) => !i.isUpsell);
+  const mixedCurrency = new Set(mainItems.map((i) => catalogLine(i.sku))).size > 1;
   const total = getTotal();
   const currency = mainItems.some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
   const isBeauty = currency === "MAD";
@@ -46,6 +47,10 @@ export function CheckoutModal() {
   const mainSku = mainItems[0]?.sku;
 
   const onValid = (data: CheckoutFormData) => {
+    if (mixedCurrency) {
+      setApiError("لا يمكن خلط منتجات الريال والدرهم في طلب واحد. أفرغ السلة واختر مساراً واحداً.");
+      return;
+    }
     setFormData(data);
     setShowUpsell(true);
   };
@@ -75,6 +80,7 @@ export function CheckoutModal() {
         name: formData.name,
         phone: formData.phone,
         city: formData.city,
+        address: formData.address,
         notes: formData.notes || undefined,
         items: orderItems,
         browser_event_id: eventId,
@@ -95,10 +101,7 @@ export function CheckoutModal() {
 
       clearCart();
       closeCheckout();
-      const thankYou = withLang(
-        lang,
-        `/thank-you?order=${encodeURIComponent(order.order_number)}&total=${paid}&currency=${currency}`
-      );
+      const thankYou = `/${lang}/thank-you?order=${encodeURIComponent(order.order_number)}&total=${paid}&currency=${currency}`;
       router.push(thankYou);
     } catch (err) {
       setApiError(err instanceof Error ? err.message : "حدث خطأ، يرجى المحاولة مجدداً");
@@ -139,7 +142,9 @@ export function CheckoutModal() {
                 نموذج إتمام الطلب
               </div>
 
-              <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
+              <div
+                className="flex-1 space-y-5 overflow-y-auto px-5 py-5 pb-8 [scroll-padding-bottom:7rem]"
+              >
                 <div className="space-y-3 rounded-xl bg-cream p-4">
                   <h3 className="text-sm font-semibold text-gray-700">ملخص طلبك</h3>
                   {mainItems.map((item) => (
@@ -218,7 +223,24 @@ export function CheckoutModal() {
                     error={errors.city?.message}
                     {...register("city")}
                   />
+                  <Input
+                    id="address"
+                    label="العنوان"
+                    placeholder="الحي، الشارع، رقم المنزل"
+                    autoComplete="street-address"
+                    className="scroll-mb-32"
+                    error={errors.address?.message}
+                    {...register("address")}
+                    onFocus={(event) => {
+                      event.currentTarget.scrollIntoView({ block: "center", behavior: "smooth" });
+                    }}
+                  />
 
+                  {mixedCurrency && (
+                    <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">
+                      لا يمكن خلط منتجات الريال والدرهم في طلب واحد.
+                    </div>
+                  )}
                   {apiError && (
                     <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-600">
                       {apiError}
@@ -233,7 +255,7 @@ export function CheckoutModal() {
               </div>
 
               <div className="sticky bottom-0 shrink-0 border-t border-gray-100 bg-white px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">
-                <Button type="submit" size="lg" className="min-h-[44px] w-full text-base" disabled={isSubmitting}>
+                <Button type="submit" size="lg" className="min-h-[44px] w-full text-base" disabled={isSubmitting || mixedCurrency}>
                   تأكيد الطلب · {formatPrice(total, "ar", currency)}
                 </Button>
                 <p className="mt-2 text-center text-xs text-gray-400">

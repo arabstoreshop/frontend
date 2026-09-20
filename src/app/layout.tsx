@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./[lang]/globals.css";
+import { MARKET_BOOTSTRAP_SCRIPT } from "@/lib/market";
 
 export const metadata: Metadata = {
   title: "Naseem",
@@ -7,8 +8,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" data-line="care" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: MARKET_BOOTSTRAP_SCRIPT }} />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

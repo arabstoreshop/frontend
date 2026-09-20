@@ -6,9 +6,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "About Naseem | Global Hemorrhoid Care",
+  title: "عن نسيم | عناية حساسة",
   description:
-    "Naseem is a global specialty brand focused on hemorrhoid care — one problem, multiple solutions, delivered with privacy and science-backed ingredients.",
+    "نسيم علامة للعناية الحساسة — 9 منتجات، الدفع عند الاستلام داخل السعودية، بخصوصية ولغة واضحة.",
 };
 
 export default function AboutPage({ params }: { params: { lang: string } }) {

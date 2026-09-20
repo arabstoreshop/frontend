@@ -1,40 +1,39 @@
 "use client";
 
-import { Globe, Menu, ShoppingCart, X } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { useMarketLine } from "@/hooks/useMarketLine";
+import { pathLang, withLang } from "@/lib/lang";
+import { homePathForLine, lineHref } from "@/lib/market";
 import { useCartStore } from "@/store/cart";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { items, openCart } = useCartStore();
   const cartCount = items.filter((i) => !i.isUpsell).length;
-  
+  const { line } = useMarketLine();
+
   const pathname = usePathname();
-  const router = useRouter();
-  const currentLang = pathname.startsWith('/en') ? 'en' : 'ar';
-  
-  const toggleLanguage = () => {
-    const newLang = currentLang === 'ar' ? 'en' : 'ar';
-    const newPath = pathname.replace(`/${currentLang}`, `/${newLang}`);
-    router.push(newPath || `/${newLang}`);
-  };
+  const currentLang = pathLang(pathname);
+
+  const href = (path: string) => lineHref(withLang(currentLang, path), line);
 
   const navLinks = [
-    { href: `/${currentLang}`, label: currentLang === 'ar' ? "الرئيسية" : "Home" },
-    { href: `/${currentLang}/collection`, label: currentLang === 'ar' ? "المنتجات" : "Products" },
-    { href: `/${currentLang}/about`, label: currentLang === 'ar' ? "عن نسيم" : "About Us" },
-    { href: `/${currentLang}/contact`, label: currentLang === 'ar' ? "تواصل معنا" : "Contact" },
+    { href: lineHref(homePathForLine(currentLang, line), line), label: "الرئيسية" },
+    { href: href("/collection"), label: "المنتجات" },
+    { href: href("/about"), label: "عن نسيم" },
+    { href: href("/contact"), label: "تواصل معنا" },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href={`/${currentLang}`} className="flex items-center gap-2.5 shrink-0">
+        <Link href={lineHref(homePathForLine(currentLang, line), line)} className="flex items-center gap-2.5 shrink-0">
           <div className="relative w-9 h-9 rounded-full overflow-hidden shadow-sm ring-1 ring-brand/10">
             <Image
               src="/favicon.png"
@@ -47,7 +46,7 @@ export function Header() {
           <div className="flex flex-col leading-none">
             <span className="text-xl font-bold text-brand tracking-tight">نسيم</span>
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">
-              {currentLang === "ar" ? "جمال وعناية" : "Beauty & Care"}
+              {line === "beauty" ? "جمال المغرب" : "عناية حساسة"}
             </span>
           </div>
         </Link>
@@ -67,16 +66,6 @@ export function Header() {
 
         {/* Cart + Language + Mobile Menu */}
         <div className="flex items-center gap-2">
-          
-          <button
-            onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors text-gray-700 text-xs font-semibold border border-gray-200"
-            aria-label="Language"
-          >
-            <Globe className="w-3.5 h-3.5" />
-            {currentLang === 'ar' ? 'English' : 'العربية'}
-          </button>
-
           <button
             onClick={openCart}
             className="relative flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand"

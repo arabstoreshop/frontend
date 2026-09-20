@@ -18,7 +18,6 @@ import Link from "next/link";
 import { MarketDoors } from "@/components/home/MarketDoors";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
-import { useMarketLine } from "@/hooks/useMarketLine";
 import { withLang } from "@/lib/lang";
 import { lineHref } from "@/lib/market";
 import { getBeautyProducts, getCareProducts } from "@/lib/products";
@@ -72,158 +71,231 @@ const qualitySteps = [
 ];
 
 export function HomeExperience({ lang }: { lang: "ar" | "en" }) {
-  const { line } = useMarketLine();
-  const href = (path: string) => lineHref(withLang(lang, path), line);
-  const isBeauty = line === "beauty";
-  const currency = isBeauty ? "MAD" : "SAR";
-  const packLabel = isBeauty ? "199 / 279 / 388 د.م." : "199 / 279 / 349 ريال";
-  const stickyPrice = formatPrice(199, "ar", currency);
+  const careHref = (path: string) => lineHref(withLang(lang, path), "care");
+  const beautyHref = (path: string) => lineHref(withLang(lang, path), "beauty");
 
-  const trustItems = isBeauty
-    ? ["الدفع عند الاستلام", "علبة صيدلية", "توصيل المغرب", "جامي حلال"]
-    : ["الدفع عند الاستلام", "تغليف خاص بدون إحراج", "توصيل داخل السعودية", "منتجات عناية حساسة مختارة بعناية"];
-
-  const stats = [
-    { value: "+2,400", label: "عميل سعيد" },
-    { value: "4.8/5", label: "تقييم العملاء" },
-    { value: isBeauty ? "6" : "9", label: "منتجات متخصصة" },
-    { value: "100%", label: "خصوصية وسرية" },
-  ];
+  const careTrust = ["الدفع عند الاستلام", "تغليف خاص بدون إحراج", "توصيل داخل السعودية", "منتجات عناية حساسة مختارة بعناية"];
+  const beautyTrust = ["الدفع عند الاستلام", "علبة صيدلية", "توصيل المغرب", "جامي حلال"];
 
   return (
     <>
       <MarketDoors />
 
-      <section className={isBeauty ? "bg-[#2a0f16] text-white" : "bg-brand-800 text-white"}>
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1 px-4 py-2 text-center text-xs sm:flex-row sm:gap-3 sm:text-sm">
-          <span>{isBeauty ? "نسيم للجمال · المغرب" : "نسيم للعناية الحساسة · السعودية"}</span>
-          <span className="hidden text-white/40 sm:inline">-</span>
-          <span>{packLabel}</span>
-          <span className="hidden text-white/40 sm:inline">-</span>
-          <span>الدفع عند الاستلام</span>
-        </div>
-      </section>
+      <div data-market="care">
+        <section className="bg-brand-800 text-white">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1 px-4 py-2 text-center text-xs sm:flex-row sm:gap-3 sm:text-sm">
+            <span>نسيم للعناية الحساسة · السعودية</span>
+            <span className="hidden text-white/40 sm:inline">-</span>
+            <span>199 / 279 / 349 ريال</span>
+            <span className="hidden text-white/40 sm:inline">-</span>
+            <span>الدفع عند الاستلام</span>
+          </div>
+        </section>
+        <CareHero href={careHref} />
+        <TrustTicker items={careTrust} />
+        <StatsRow productCount="9" />
+        <ProblemPicker href={careHref} />
+        <CareGrid lang={lang} href={careHref} />
+        <CareScience />
+        <CareReviews />
+        <CodPitch
+          href={careHref}
+          body="لأن الثقة في هذا النوع من المنتجات أهم من أي شيء. لا تحتاج بطاقة بنكية، ولا تدفع قبل وصول الطلب. يصلك بتغليف خاص، وتدفع عند الاستلام داخل السعودية."
+          packTitle="تغليف خاص"
+          packText="لا توجد تفاصيل محرجة على الغلاف الخارجي."
+          packLabel="199 / 279 / 349 ريال"
+        />
+        <StickyBuy href={careHref("/collection")} price={formatPrice(199, "ar", "SAR")} />
+      </div>
 
-      {isBeauty ? <BeautyHero href={href} /> : <CareHero href={href} />}
+      <div data-market="beauty">
+        <section className="bg-[#2a0f16] text-white">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1 px-4 py-2 text-center text-xs sm:flex-row sm:gap-3 sm:text-sm">
+            <span>نسيم للجمال · المغرب</span>
+            <span className="hidden text-white/40 sm:inline">-</span>
+            <span>199 / 279 / 388 د.م.</span>
+            <span className="hidden text-white/40 sm:inline">-</span>
+            <span>الدفع عند الاستلام</span>
+          </div>
+        </section>
+        <BeautyHero href={beautyHref} />
+        <TrustTicker items={beautyTrust} />
+        <StatsRow productCount="6" />
+        <BeautyGrid lang={lang} href={beautyHref} />
+        <CodPitch
+          href={beautyHref}
+          body="الثقة أهم من أي بطاقة. تخلّصي عند الباب فالمغرب، والعلبة صيدلية تتحلّ قدام العائلة."
+          packTitle="علبة صيدلية"
+          packText="تتحلّ قدام العائلة بلا إحراج."
+          packLabel="199 / 279 / 388 د.م."
+        />
+        <StickyBuy href={beautyHref("/collection")} price={formatPrice(199, "ar", "MAD")} />
+      </div>
+    </>
+  );
+}
 
-      <section className="overflow-hidden bg-brand py-4 text-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 text-sm font-semibold sm:px-6">
-          {[...trustItems, ...trustItems].map((item, index) => (
-            <div key={`${item}-${index}`} className="flex items-center gap-2 text-white/95">
-              <CheckCircle className="h-4 w-4" />
-              <span>{item}</span>
+function TrustTicker({ items }: { items: string[] }) {
+  return (
+    <section className="overflow-hidden bg-brand py-4 text-white">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 text-sm font-semibold sm:px-6">
+        {[...items, ...items].map((item, index) => (
+          <div key={`${item}-${index}`} className="flex items-center gap-2 text-white/95">
+            <CheckCircle className="h-4 w-4" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StatsRow({ productCount }: { productCount: string }) {
+  const stats = [
+    { value: "+2,400", label: "عميل سعيد" },
+    { value: "4.8/5", label: "تقييم العملاء" },
+    { value: productCount, label: "منتجات متخصصة" },
+    { value: "100%", label: "خصوصية وسرية" },
+  ];
+  return (
+    <section className="bg-white py-10">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 sm:px-6 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <div key={stat.label} className="rounded-3xl border border-gray-100 bg-cream p-6 text-center">
+            <p className="text-3xl font-extrabold text-brand">{stat.value}</p>
+            <p className="mt-2 text-sm text-gray-500">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CareScience() {
+  return (
+    <>
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+          <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-[2rem] bg-brand-50 lg:order-1">
+            <Image
+              src="/images/products/chitosan-gel.jpg"
+              alt="العلم وراء نسيم — جل الكيتوزان الحيوي"
+              fill
+              className="object-cover opacity-90"
+            />
+            <div className="absolute inset-0 bg-brand-900/20" />
+            <div className="absolute inset-x-6 bottom-6 rounded-3xl bg-white/95 p-6 shadow-xl backdrop-blur">
+              <p className="text-sm font-bold text-brand">معيار نسيم للجودة</p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-950">لا نبيع منتجات عشوائية</p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-white py-10">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 sm:px-6 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="rounded-3xl border border-gray-100 bg-cream p-6 text-center">
-              <p className="text-3xl font-extrabold text-brand">{stat.value}</p>
-              <p className="mt-2 text-sm text-gray-500">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {isBeauty ? (
-        <>
-          <BeautyGrid lang={lang} href={href} />
-          <CareGrid lang={lang} href={href} demoted />
-        </>
-      ) : (
-        <>
-          <ProblemPicker href={href} />
-          <CareGrid lang={lang} href={href} />
-          <BeautyGrid lang={lang} href={href} demoted />
-        </>
-      )}
-
-      {!isBeauty && (
-        <>
-          <section className="bg-white py-16 sm:py-20">
-            <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-              <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-[2rem] bg-brand-50 lg:order-1">
-                <Image
-                  src="/images/products/chitosan-gel.jpg"
-                  alt="العلم وراء نسيم — جل الكيتوزان الحيوي"
-                  fill
-                  className="object-cover opacity-90"
-                />
-                <div className="absolute inset-0 bg-brand-900/20" />
-                <div className="absolute inset-x-6 bottom-6 rounded-3xl bg-white/95 p-6 shadow-xl backdrop-blur">
-                  <p className="text-sm font-bold text-brand">معيار نسيم للجودة</p>
-                  <p className="mt-2 text-2xl font-extrabold text-gray-950">لا نبيع منتجات عشوائية</p>
+          </div>
+          <div className="order-1 space-y-6 lg:order-2">
+            <p className="text-sm font-bold text-brand">العلم وراء نسيم</p>
+            <h2 className="text-3xl font-extrabold leading-tight text-gray-950 sm:text-4xl">
+              كل منتج له وظيفة واضحة في روتين الراحة
+            </h2>
+            <p className="leading-8 text-gray-600">
+              كل منتج مبني على أبحاث علمية: الكيتوزان للحماية والإرقاء، الديوسمين لتقوية الأوردة، الكركمين لوقف التطوّر، السيليوم لمنع الإمساك. مكونات مُثبتة بتجارب سريرية — بدون ادعاءات فارغة.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                "مكونات مفهومة ومذكورة بوضوح",
+                "تجربة طلب خاصة وحساسة",
+                "روتين بثلاث زوايا وليس منتجاً واحداً",
+                "لغة واضحة بدون ادعاءات علاج نهائي",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3 rounded-2xl bg-cream p-4">
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+                  <span className="text-sm font-semibold text-gray-800">{item}</span>
                 </div>
-              </div>
-              <div className="order-1 space-y-6 lg:order-2">
-                <p className="text-sm font-bold text-brand">العلم وراء نسيم</p>
-                <h2 className="text-3xl font-extrabold leading-tight text-gray-950 sm:text-4xl">
-                  كل منتج له وظيفة واضحة في روتين الراحة
-                </h2>
-                <p className="leading-8 text-gray-600">
-                  كل منتج مبني على أبحاث علمية: الكيتوزان للحماية والإرقاء، الديوسمين لتقوية الأوردة، الكركمين لوقف التطوّر، السيليوم لمنع الإمساك. مكونات مُثبتة بتجارب سريرية — بدون ادعاءات فارغة.
-                </p>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {[
-                    "مكونات مفهومة ومذكورة بوضوح",
-                    "تجربة طلب خاصة وحساسة",
-                    "روتين بثلاث زوايا وليس منتجاً واحداً",
-                    "لغة واضحة بدون ادعاءات علاج نهائي",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-2xl bg-cream p-4">
-                      <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
-                      <span className="text-sm font-semibold text-gray-800">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
-          </section>
-
-          <section className="bg-brand-50 py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6">
-              <div className="mx-auto mb-10 max-w-2xl text-center">
-                <p className="mb-3 text-sm font-bold text-brand">معيار نسيم</p>
-                <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">
-                  خمس خطوات قبل أن يحمل المنتج اسم نسيم
-                </h2>
+          </div>
+        </div>
+      </section>
+      <section className="bg-brand-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <p className="mb-3 text-sm font-bold text-brand">معيار نسيم</p>
+            <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">
+              خمس خطوات قبل أن يحمل المنتج اسم نسيم
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+            {qualitySteps.map((step, index) => (
+              <div key={step} className="rounded-3xl bg-white p-5 text-center shadow-sm ring-1 ring-gray-100">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand text-lg font-extrabold text-white">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <p className="text-sm font-bold text-gray-900">{step}</p>
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-                {qualitySteps.map((step, index) => (
-                  <div key={step} className="rounded-3xl bg-white p-5 text-center shadow-sm ring-1 ring-gray-100">
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand text-lg font-extrabold text-white">
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                    <p className="text-sm font-bold text-gray-900">{step}</p>
-                  </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function CareReviews() {
+  return (
+    <section className="bg-cream py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mb-10 text-center">
+          <div className="mb-3 flex justify-center text-amber-400">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Star key={index} className="h-6 w-6 fill-current" />
+            ))}
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">عملاء اختاروا الخصوصية والوضوح</h2>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {reviews.map((review) => (
+            <div key={review.name} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+              <div className="mb-4 flex text-amber-400">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Star key={index} className="h-4 w-4 fill-current" />
                 ))}
               </div>
+              <p className="min-h-20 text-sm leading-7 text-gray-700">&ldquo;{review.text}&rdquo;</p>
+              <div className="mt-5 border-t border-gray-100 pt-4">
+                <p className="font-bold text-gray-950">{review.name}</p>
+                <p className="text-xs text-gray-400">{review.city}</p>
+              </div>
             </div>
-          </section>
-        </>
-      )}
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
+function CodPitch({
+  href,
+  body,
+  packTitle,
+  packText,
+  packLabel,
+}: {
+  href: (path: string) => string;
+  body: string;
+  packTitle: string;
+  packText: string;
+  packLabel: string;
+}) {
+  return (
+    <>
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2">
           <div className="rounded-[2rem] bg-brand p-8 text-white sm:p-10">
             <Truck className="mb-6 h-12 w-12 text-white" />
             <h2 className="text-3xl font-extrabold">لماذا الدفع عند الاستلام؟</h2>
-            <p className="mt-4 leading-8 text-white/85">
-              {isBeauty
-                ? "الثقة أهم من أي بطاقة. تخلّصي عند الباب فالمغرب، والعلبة صيدلية تتحلّ قدام العائلة."
-                : "لأن الثقة في هذا النوع من المنتجات أهم من أي شيء. لا تحتاج بطاقة بنكية، ولا تدفع قبل وصول الطلب. يصلك بتغليف خاص، وتدفع عند الاستلام داخل السعودية."}
-            </p>
+            <p className="mt-4 leading-8 text-white/85">{body}</p>
           </div>
           <div className="grid gap-4">
             {[
               { title: "بدون بطاقة بنكية", text: "الطلب يتم باسمك ورقم جوالك فقط." },
-              {
-                title: isBeauty ? "علبة صيدلية" : "تغليف خاص",
-                text: isBeauty ? "تتحلّ قدام العائلة بلا إحراج." : "لا توجد تفاصيل محرجة على الغلاف الخارجي.",
-              },
+              { title: packTitle, text: packText },
               { title: "تأكيد أوضح", text: "صفحة الشكر توضّح المبلغ والمنتجات وخطوات الاستلام." },
             ].map((item) => (
               <div key={item.title} className="flex gap-4 rounded-3xl border border-gray-100 bg-cream p-6">
@@ -237,38 +309,6 @@ export function HomeExperience({ lang }: { lang: "ar" | "en" }) {
           </div>
         </div>
       </section>
-
-      {!isBeauty && (
-        <section className="bg-cream py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="mb-10 text-center">
-              <div className="mb-3 flex justify-center text-amber-400">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star key={index} className="h-6 w-6 fill-current" />
-                ))}
-              </div>
-              <h2 className="text-3xl font-extrabold text-gray-950 sm:text-4xl">عملاء اختاروا الخصوصية والوضوح</h2>
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {reviews.map((review) => (
-                <div key={review.name} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-                  <div className="mb-4 flex text-amber-400">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <Star key={index} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="min-h-20 text-sm leading-7 text-gray-700">&ldquo;{review.text}&rdquo;</p>
-                  <div className="mt-5 border-t border-gray-100 pt-4">
-                    <p className="font-bold text-gray-950">{review.name}</p>
-                    <p className="text-xs text-gray-400">{review.city}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       <section className="relative overflow-hidden bg-brand py-16 text-white sm:py-20">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6">
           <Award className="mx-auto mb-6 h-14 w-14 text-sand" />
@@ -284,7 +324,6 @@ export function HomeExperience({ lang }: { lang: "ar" | "en" }) {
           <p className="mt-6 text-sm text-white/70">{packLabel}</p>
         </div>
       </section>
-
       <section className="mb-24 bg-gray-50 py-6">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="text-xs leading-relaxed text-gray-400">
@@ -292,18 +331,22 @@ export function HomeExperience({ lang }: { lang: "ar" | "en" }) {
           </p>
         </div>
       </section>
-
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-[max(12px,env(safe-area-inset-bottom))]">
-        <div className="mx-auto flex max-w-6xl items-center justify-center">
-          <Link
-            href={href("/collection")}
-            className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-brand px-8 text-lg font-bold text-white shadow-lg sm:w-80"
-          >
-            اطلب الآن · {stickyPrice}
-          </Link>
-        </div>
-      </div>
     </>
+  );
+}
+
+function StickyBuy({ href, price }: { href: string; price: string }) {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-[max(12px,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-6xl items-center justify-center">
+        <Link
+          href={href}
+          className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-brand px-8 text-lg font-bold text-white shadow-lg sm:w-80"
+        >
+          اطلب الآن · {price}
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -411,12 +454,11 @@ function BeautyHero({ href }: { href: (path: string) => string }) {
         </div>
         <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-[2rem] shadow-2xl">
           <Image
-            src="/images/beauty/system.png"
+            src="/images/beauty/system.webp"
             alt="مجموعة نسيم للجمال"
             fill
             unoptimized
             className="object-cover"
-            priority
           />
         </div>
       </div>
@@ -465,14 +507,12 @@ function ProblemPicker({ href }: { href: (path: string) => string }) {
 function CareGrid({
   lang,
   href,
-  demoted = false,
 }: {
   lang: "ar" | "en";
   href: (path: string) => string;
-  demoted?: boolean;
 }) {
   return (
-    <section id="care" className={`${demoted ? "bg-white" : "bg-cream"} py-16 sm:py-20`}>
+    <section id="care" className="bg-cream py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
@@ -499,14 +539,12 @@ function CareGrid({
 function BeautyGrid({
   lang,
   href,
-  demoted = false,
 }: {
   lang: "ar" | "en";
   href: (path: string) => string;
-  demoted?: boolean;
 }) {
   return (
-    <section id="beauty" className={`${demoted ? "bg-white" : "bg-[#f7f3ef]"} py-16 sm:py-20`}>
+    <section id="beauty" className="bg-[#f7f3ef] py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
@@ -520,18 +558,16 @@ function BeautyGrid({
             <Link href={href("/collection")}>المجموعة كاملة</Link>
           </Button>
         </div>
-        {!demoted && (
-          <div className="mb-10 overflow-hidden rounded-[2rem] shadow-xl">
-            <Image
-              src="/images/beauty/system.png"
-              alt="مجموعة نسيم للجمال"
-              width={1600}
-              height={900}
-              unoptimized
-              className="h-auto w-full object-cover"
-            />
-          </div>
-        )}
+        <div className="mb-10 overflow-hidden rounded-[2rem] shadow-xl">
+          <Image
+            src="/images/beauty/system.webp"
+            alt="مجموعة نسيم للجمال"
+            width={1600}
+            height={900}
+            unoptimized
+            className="h-auto w-full object-cover"
+          />
+        </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {getBeautyProducts().map((product) => (
             <ProductCard key={product.sku} product={product} lang={lang} />

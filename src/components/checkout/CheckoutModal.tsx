@@ -75,7 +75,6 @@ export function CheckoutModal() {
         name: formData.name,
         phone: formData.phone,
         city: formData.city,
-        address: formData.address,
         notes: formData.notes || undefined,
         items: orderItems,
         browser_event_id: eventId,
@@ -218,14 +217,6 @@ export function CheckoutModal() {
                     autoComplete="address-level2"
                     error={errors.city?.message}
                     {...register("city")}
-                  />
-                  <Input
-                    id="address"
-                    label="العنوان"
-                    placeholder="الحي، الشارع، رقم المنزل"
-                    autoComplete="street-address"
-                    error={errors.address?.message}
-                    {...register("address")}
                   />
 
                   {apiError && (

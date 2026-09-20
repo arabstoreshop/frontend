@@ -4,31 +4,35 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle, Lock, Package, Shield, Star, X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UpsellModal } from "@/components/checkout/UpsellModal";
-import { placeOrder } from "@/lib/api";
+import { pingApiHealth, placeOrder } from "@/lib/api";
+import { pathLang, withLang } from "@/lib/lang";
 import { formatPrice, generateEventId } from "@/lib/utils";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/validation";
-import { PRODUCTS } from "@/lib/products";
+import { PRODUCTS, catalogLine } from "@/lib/products";
 import { useCartStore } from "@/store/cart";
 import { trackPurchasePixel } from "@/components/pixels/PixelScripts";
 
 export function CheckoutModal() {
   const router = useRouter();
+  const pathname = usePathname();
+  const lang = pathLang(pathname);
   const { items, isCheckoutOpen, closeCheckout, clearCart, getTotal } = useCartStore();
   const [showUpsell, setShowUpsell] = useState(false);
   const [formData, setFormData] = useState<CheckoutFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [apiDown, setApiDown] = useState(false);
 
   const mainItems = items.filter((i) => !i.isUpsell);
-  const upsellItems = items.filter((i) => i.isUpsell);
   const total = getTotal();
+  const currency = mainItems.some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
 
   const {
     register,
@@ -45,6 +49,11 @@ export function CheckoutModal() {
     setFormData(data);
     setShowUpsell(true);
   };
+
+  useEffect(() => {
+    if (!isCheckoutOpen) return;
+    pingApiHealth().then((ok) => setApiDown(!ok));
+  }, [isCheckoutOpen]);
 
   const submitOrder = async (includeUpsell: boolean, upsellSku?: string) => {
     if (!formData) return;
@@ -69,6 +78,9 @@ export function CheckoutModal() {
       const order = await placeOrder({
         name: formData.name,
         phone: formData.phone,
+        city: formData.city || undefined,
+        address: formData.address || undefined,
+        notes: formData.notes || undefined,
         items: orderItems,
         browser_event_id: eventId,
       });
@@ -77,14 +89,14 @@ export function CheckoutModal() {
       trackPurchasePixel({
         eventId,
         value: order.total_sar,
-        currency: "SAR",
+        currency: currency,
         orderId: order.order_number,
         contentIds: orderItems.map((i) => i.sku),
       });
 
       clearCart();
       closeCheckout();
-      router.push(`/thank-you?order=${order.order_number}`);
+      router.push(withLang(lang, `/thank-you?order=${order.order_number}`));
     } catch (err) {
       setApiError(err instanceof Error ? err.message : "حدث خطأ، يرجى المحاولة مجدداً");
     } finally {
@@ -138,13 +150,13 @@ export function CheckoutModal() {
                           <p className="text-sm font-medium text-gray-800 line-clamp-1">{item.name}</p>
                           <p className="text-xs text-gray-400">الكمية: {item.quantity}</p>
                         </div>
-                        <p className="font-bold text-brand text-sm">{formatPrice(item.bundlePrice)}</p>
+                        <p className="font-bold text-brand text-sm">{formatPrice(item.bundlePrice, "ar", currency)}</p>
                       </div>
                     );
                   })}
                   <div className="border-t border-gray-200 pt-3 flex justify-between">
                     <span className="font-bold text-gray-900">المجموع</span>
-                    <span className="font-bold text-brand text-lg">{formatPrice(total)}</span>
+                    <span className="font-bold text-brand text-lg">{formatPrice(total, "ar", currency)}</span>
                   </div>
                 </div>
 
@@ -190,16 +202,37 @@ export function CheckoutModal() {
                   <Input
                     id="phone"
                     label="رقم الجوال"
-                    placeholder="05XXXXXXXX"
+                    placeholder="رقم الهاتف"
                     type="tel"
-                    inputMode="numeric"
+                    inputMode="tel"
                     dir="ltr"
                     autoComplete="tel"
-                    maxLength={10}
+                    maxLength={20}
                     error={errors.phone?.message}
                     {...register("phone")}
                   />
+                  <Input
+                    id="city"
+                    label="المدينة"
+                    placeholder="الدار البيضاء / الرياض"
+                    autoComplete="address-level2"
+                    error={errors.city?.message}
+                    {...register("city")}
+                  />
+                  <Input
+                    id="address"
+                    label="العنوان (اختياري)"
+                    placeholder="الحي، الشارع"
+                    autoComplete="street-address"
+                    error={errors.address?.message}
+                    {...register("address")}
+                  />
 
+                  {apiDown && (
+                    <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg text-sm text-amber-800">
+                      خادم الطلبات ما جاوبش دابا. تقدر تعبّي الفورم، وإلا فشل الإرسال حاول بعد دقيقة.
+                    </div>
+                  )}
                   {apiError && (
                     <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600">
                       {apiError}
@@ -217,7 +250,7 @@ export function CheckoutModal() {
 
                   <p className="text-center text-xs text-gray-400">
                     بالضغط على تأكيد الطلب، أنت توافق على{" "}
-                    <a href="/terms" className="underline hover:text-brand">الشروط والأحكام</a>
+                    <a href={withLang(lang, "/terms")} className="underline hover:text-brand">الشروط والأحكام</a>
                   </p>
                 </form>
               </div>

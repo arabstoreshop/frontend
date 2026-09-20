@@ -7,11 +7,12 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getBeautyLanding } from "@/lib/beauty-landing";
+import { withLang } from "@/lib/lang";
 import { getCrossells, getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
-export function BeautyLanding({ product }: { product: Product }) {
+export function BeautyLanding({ product, lang = "ar" }: { product: Product; lang?: string }) {
   const landing = getBeautyLanding(product);
   const crossSells = getCrossells(product.sku);
   const pair = landing ? getProductBySlug(landing.pairingSlug) : undefined;
@@ -183,7 +184,7 @@ export function BeautyLanding({ product }: { product: Product }) {
                     <h2 className="text-3xl font-extrabold text-gray-950">{pair.name}</h2>
                     <p className="text-lg leading-8 text-gray-600">{landing.pairingPitch}</p>
                     <Link
-                      href={`/products/${pair.slug}`}
+                      href={withLang(lang, `/products/${pair.slug}`)}
                       className="inline-flex w-fit rounded-full bg-[#2a0f16] px-6 py-3 font-bold text-white"
                     >
                       شوفي العلبة
@@ -250,7 +251,7 @@ export function BeautyLanding({ product }: { product: Product }) {
             <h2 className="mb-8 text-center text-3xl font-extrabold text-gray-950">نفس الدار، مشكل آخر</h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {crossSells.map((item) => (
-                <ProductCard key={item.sku} product={item} />
+                <ProductCard key={item.sku} product={item} lang={lang === "en" ? "en" : "ar"} />
               ))}
             </div>
           </section>

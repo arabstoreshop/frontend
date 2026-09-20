@@ -47,6 +47,9 @@ export interface CartItem {
 export interface OrderPayload {
   name: string;
   phone: string;
+  city?: string;
+  address?: string;
+  notes?: string;
   items: {
     sku: string;
     quantity: number;

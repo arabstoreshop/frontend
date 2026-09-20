@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function Footer() {
+import { withLang, type StoreLang } from "@/lib/lang";
+
+export function Footer({ lang = "ar" }: { lang?: StoreLang }) {
+  const href = (path: string) => withLang(lang, path);
   return (
     <footer className="bg-brand-800 text-white mt-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
@@ -29,11 +32,11 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-white/90">روابط سريعة</h3>
             <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link href="/collection" className="hover:text-white transition-colors">جميع المنتجات</Link></li>
-              <li><Link href="/about" className="hover:text-white transition-colors">عن نسيم</Link></li>
-              <li><Link href="/faq" className="hover:text-white transition-colors">الأسئلة الشائعة</Link></li>
-              <li><Link href="/track" className="hover:text-white transition-colors">تتبع طلبك</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors">تواصل معنا</Link></li>
+              <li><Link href={href("/collection")} className="hover:text-white transition-colors">جميع المنتجات</Link></li>
+              <li><Link href={href("/about")} className="hover:text-white transition-colors">عن نسيم</Link></li>
+              <li><Link href={href("/faq")} className="hover:text-white transition-colors">الأسئلة الشائعة</Link></li>
+              <li><Link href={href("/track")} className="hover:text-white transition-colors">تتبع طلبك</Link></li>
+              <li><Link href={href("/contact")} className="hover:text-white transition-colors">تواصل معنا</Link></li>
             </ul>
           </div>
 
@@ -41,9 +44,9 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-white/90">السياسات</h3>
             <ul className="space-y-2.5 text-sm text-white/70">
-              <li><Link href="/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
-              <li><Link href="/terms" className="hover:text-white transition-colors">الشروط والأحكام</Link></li>
-              <li><Link href="/shipping" className="hover:text-white transition-colors">الشحن والتوصيل</Link></li>
+              <li><Link href={href("/privacy")} className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
+              <li><Link href={href("/terms")} className="hover:text-white transition-colors">الشروط والأحكام</Link></li>
+              <li><Link href={href("/shipping")} className="hover:text-white transition-colors">الشحن والتوصيل</Link></li>
             </ul>
             <div className="mt-6 p-3 rounded-lg bg-white/10">
               <p className="text-xs text-white/60 leading-relaxed">
@@ -56,10 +59,11 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-white/40">
-          <p>© 2024 نسيم · Naseem. جميع الحقوق محفوظة.</p>
-          <p>المملكة العربية السعودية 🇸🇦</p>
+          <p>© 2026 نسيم · Naseem. جميع الحقوق محفوظة.</p>
+          <p>المغرب 🇲🇦 · السعودية 🇸🇦</p>
         </div>
       </div>
     </footer>
   );
 }
+

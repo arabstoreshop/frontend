@@ -4,16 +4,21 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ShoppingBag, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { pathLang, withLang } from "@/lib/lang";
 import { formatPrice } from "@/lib/utils";
-import { PRODUCTS } from "@/lib/products";
+import { PRODUCTS, catalogLine } from "@/lib/products";
 import { useCartStore } from "@/store/cart";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, openCheckout, getTotal } = useCartStore();
+  const pathname = usePathname();
+  const collectionHref = withLang(pathLang(pathname), "/collection");
   const mainItems = items.filter((i) => !i.isUpsell);
   const total = getTotal();
+  const currency = mainItems.some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
 
   // Cross-sells: products not in cart
   const cartSkus = new Set(items.map((i) => i.sku));
@@ -57,7 +62,7 @@ export function CartDrawer() {
                 <p className="text-gray-300 text-sm">أضف منتجاً للبدء</p>
                 <Dialog.Close asChild>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/collection">تصفح المنتجات</Link>
+                    <Link href={collectionHref}>تصفح المنتجات</Link>
                   </Button>
                 </Dialog.Close>
               </div>
@@ -81,7 +86,7 @@ export function CartDrawer() {
                         الكمية: {item.quantity}
                       </p>
                       <p className="text-brand font-bold mt-1">
-                        {formatPrice(item.bundlePrice)}
+                        {formatPrice(item.bundlePrice, "ar", currency)}
                       </p>
                     </div>
                     <button
@@ -119,12 +124,12 @@ export function CartDrawer() {
                               {product.name}
                             </p>
                             <p className="text-xs text-brand font-bold">
-                              {formatPrice(199)}
+                              {formatPrice(199, "ar", product.currency === "MAD" ? "MAD" : "SAR")}
                             </p>
                           </div>
                           <Dialog.Close asChild>
                             <Link
-                              href={`/products/${product.slug}`}
+                              href={withLang(pathLang(pathname), `/products/${product.slug}`)}
                               className="text-xs text-brand border border-brand rounded-lg px-2.5 py-1 hover:bg-brand hover:text-white transition-colors whitespace-nowrap"
                             >
                               عرض
@@ -144,7 +149,7 @@ export function CartDrawer() {
             <div className="border-t border-gray-100 px-5 py-5 space-y-3 bg-white">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 font-medium">المجموع</span>
-                <span className="text-xl font-bold text-brand">{formatPrice(total)}</span>
+                <span className="text-xl font-bold text-brand">{formatPrice(total, "ar", currency)}</span>
               </div>
               <p className="text-xs text-gray-400 text-center">الدفع عند الاستلام • شحن مجاني</p>
               <Button

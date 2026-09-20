@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "Naseem is a global specialty brand focused on hemorrhoid care — one problem, multiple solutions, delivered with privacy and science-backed ingredients.",
 };
 
-export default function AboutPage() {
+export default function AboutPage({ params }: { params: { lang: string } }) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-14">
       {/* Hero */}
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
       <div className="text-center">
         <Button size="lg" asChild>
-          <Link href="/collection">تصفح منتجاتنا</Link>
+          <Link href={`/${params.lang}/collection`}>تصفح منتجاتنا</Link>
         </Button>
       </div>
     </div>

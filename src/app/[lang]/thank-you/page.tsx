@@ -3,19 +3,22 @@
 import { CheckCircle, Copy, Lock, Package, Phone, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { fetchOrder } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
-import { PRODUCTS } from "@/lib/products";
+import { PRODUCTS, catalogLine } from "@/lib/products";
+import { pathLang, withLang } from "@/lib/lang";
 import type { OrderResponse } from "@/types";
 
 function ThankYouContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
+  const lang = pathLang(pathname);
   const orderNumber = searchParams.get("order");
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,14 +26,14 @@ function ThankYouContent() {
 
   useEffect(() => {
     if (!orderNumber) {
-      router.replace("/");
+      router.replace(withLang(lang, "/"));
       return;
     }
     fetchOrder(orderNumber)
       .then(setOrder)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [orderNumber, router]);
+  }, [orderNumber, router, lang]);
 
   const copyOrderNumber = () => {
     if (orderNumber) {
@@ -43,6 +46,7 @@ function ThankYouContent() {
 
   const crossSellSkus = new Set(order?.items.map((i) => i.sku) ?? []);
   const crossSells = PRODUCTS.filter((p) => !crossSellSkus.has(p.sku)).slice(0, 2);
+  const currency = (order?.items ?? []).some((i) => catalogLine(i.sku) === "beauty") ? "MAD" : "SAR";
 
   if (loading) {
     return (
@@ -85,6 +89,12 @@ function ThankYouContent() {
         </div>
       )}
 
+      {!order && orderNumber && (
+        <p className="text-sm text-gray-500 mb-6">
+          رقم طلبك ظاهر فوق. تفاصيل المجموع تظهر بعد تأكيد الخادم — إذا ما بانوش، احتفظ بالرقم وتواصل معنا.
+        </p>
+      )}
+
       {/* Order Summary */}
       {order && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
@@ -105,13 +115,13 @@ function ThankYouContent() {
                     )}
                   </p>
                 </div>
-                <p className="font-bold text-brand">{formatPrice(item.line_total_sar)}</p>
+                <p className="font-bold text-brand">{formatPrice(item.line_total_sar, "ar", currency)}</p>
               </div>
             ))}
           </div>
           <div className="px-5 py-4 bg-cream flex justify-between items-center">
             <span className="font-bold text-gray-900">المجموع (عند الاستلام)</span>
-            <span className="font-bold text-brand text-xl">{formatPrice(order.total_sar)}</span>
+            <span className="font-bold text-brand text-xl">{formatPrice(order.total_sar, "ar", currency)}</span>
           </div>
         </div>
       )}
@@ -152,7 +162,7 @@ function ThankYouContent() {
       {/* Track order */}
       <div className="text-center mb-12">
         <Button variant="outline" asChild>
-          <Link href={`/track?order=${orderNumber}`}>
+          <Link href={withLang(lang, `/track?order=${orderNumber}`)}>
             <Package className="w-4 h-4" />
             تتبع طلبك
           </Link>
@@ -167,7 +177,7 @@ function ThankYouContent() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {crossSells.map((p) => (
-              <ProductCard key={p.sku} product={p} />
+              <ProductCard key={p.sku} product={p} lang={lang} />
             ))}
           </div>
         </div>

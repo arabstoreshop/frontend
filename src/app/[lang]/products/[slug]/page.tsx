@@ -36,16 +36,16 @@ export default function ProductPage({ params }: Props) {
   const crossSells = getCrossells(product.sku);
 
   if (product.line === "beauty") {
-    return <BeautyLanding product={product} />;
+    return <BeautyLanding product={product} lang={params.lang} />;
   }
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-        <Link href="/" className="hover:text-brand transition-colors">الرئيسية</Link>
+        <Link href={`/${params.lang}`} className="hover:text-brand transition-colors">الرئيسية</Link>
         <ArrowRight className="w-3.5 h-3.5" />
-        <Link href="/collection" className="hover:text-brand transition-colors">المنتجات</Link>
+        <Link href={`/${params.lang}/collection`} className="hover:text-brand transition-colors">المنتجات</Link>
         <ArrowRight className="w-3.5 h-3.5" />
         <span className="text-gray-700 font-medium">{product.name}</span>
       </nav>
@@ -418,7 +418,7 @@ export default function ProductPage({ params }: Props) {
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">قد يعجبك أيضاً لنتائج أفضل</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-4xl mx-auto">
             {crossSells.map((p) => (
-              <ProductCard key={p.sku} product={p} />
+              <ProductCard key={p.sku} product={p} lang={params.lang === "en" ? "en" : "ar"} />
             ))}
           </div>
         </div>

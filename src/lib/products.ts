@@ -510,7 +510,18 @@ const CARE_PRODUCTS: Product[] = [
   }
 ];
 
-export const PRODUCTS: Product[] = [...BEAUTY_PRODUCTS, ...CARE_PRODUCTS];
+export const PRODUCTS: Product[] = [
+  ...BEAUTY_PRODUCTS,
+  ...CARE_PRODUCTS.map((p) => ({ ...p, line: "care" as const, currency: "SAR" as const })),
+];
+
+export function getProductBySku(sku: string): Product | undefined {
+  return PRODUCTS.find((p) => p.sku === sku);
+}
+
+export function catalogLine(sku: string): "beauty" | "care" {
+  return getProductBySku(sku)?.line === "beauty" ? "beauty" : "care";
+}
 
 export const OFFERS: Offer[] = [
   {
@@ -552,20 +563,18 @@ export const BEAUTY_OFFERS: Offer[] = [
   },
 ];
 
-export const BEAUTY_BUNDLE_PRICES: Record<number, number> = {
-  1: 199,
-  2: 279,
-  3: 388,
-};
+export const BUNDLE_PRICES: Record<number, number> = Object.fromEntries(
+  OFFERS.map((o) => [o.qty, o.price])
+);
+
+export const BEAUTY_BUNDLE_PRICES: Record<number, number> = Object.fromEntries(
+  BEAUTY_OFFERS.map((o) => [o.qty, o.price])
+);
 
 export const UPSELL_PRICE = 99;
 
 export function getProductBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((p) => p.slug === slug);
-}
-
-export function getProductBySku(sku: string): Product | undefined {
-  return PRODUCTS.find((p) => p.sku === sku);
 }
 
 export function getCrossells(currentSku: string): Product[] {
@@ -583,9 +592,3 @@ export function getBeautyProducts(): Product[] {
 export function getCareProducts(): Product[] {
   return PRODUCTS.filter((p) => p.line !== "beauty");
 }
-
-export const BUNDLE_PRICES: Record<number, number> = {
-  1: 129,
-  2: 199,
-  3: 269,
-};

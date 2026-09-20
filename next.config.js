@@ -31,6 +31,9 @@ const nextConfig = {
   },
   ...(!isStatic
     ? {
+        async rewrites() {
+          return [{ source: "/profit", destination: "/profit/index.html" }];
+        },
         async headers() {
           return [
             {

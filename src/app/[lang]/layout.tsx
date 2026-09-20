@@ -4,6 +4,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CheckoutModal } from "@/components/checkout/CheckoutModal";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { HtmlLang } from "@/components/layout/HtmlLang";
 import { PixelScripts } from "@/components/pixels/PixelScripts";
 
 export function generateStaticParams() {
@@ -75,9 +76,10 @@ export default function LangLayout({
   const dir = params.lang === "en" ? "ltr" : "rtl";
   return (
     <div lang={params.lang} dir={dir} className="min-h-screen flex flex-col font-arabic">
+      <HtmlLang lang={params.lang} />
       <Header />
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer lang={params.lang === "en" ? "en" : "ar"} />
       <CartDrawer />
       <CheckoutModal />
       <PixelScripts />

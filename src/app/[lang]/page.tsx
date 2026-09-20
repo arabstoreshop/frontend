@@ -16,6 +16,7 @@ import Link from "next/link";
 
 import { ProductCard } from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
+import { withLang } from "@/lib/lang";
 import { getBeautyProducts, getCareProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ const trustItems = [
 ];
 
 const stats = [
-  { value: "+50,000", label: "عميل سعيد" },
+  { value: "+2,400", label: "عميل سعيد" },
   { value: "4.8/5", label: "تقييم العملاء" },
   { value: "9", label: "منتجات متخصصة" },
   { value: "100%", label: "خصوصية وسرية" },
@@ -85,7 +86,9 @@ const qualitySteps = [
   "تحسين الروتين",
 ];
 
-export default function HomePage() {
+export default function HomePage({ params }: { params: { lang: string } }) {
+  const lang = params.lang === "en" ? "en" : "ar";
+  const href = (path: string) => withLang(lang, path);
   return (
     <>
       <section className="bg-brand-800 text-white">
@@ -119,7 +122,7 @@ export default function HomePage() {
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button size="xl" asChild>
-                <Link href="/collection">
+                <Link href={href("/collection")}>
                   شوفي المجموعة
                   <ArrowLeft className="h-5 w-5" />
                 </Link>
@@ -214,7 +217,7 @@ export default function HomePage() {
               return (
                 <Link
                   key={card.title}
-                  href={card.href}
+                  href={href(card.href)}
                   className="group rounded-3xl border border-gray-100 bg-gradient-to-br from-cream to-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                 >
                   <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-white">
@@ -247,7 +250,7 @@ export default function HomePage() {
               </p>
             </div>
             <Button variant="outline" asChild>
-              <Link href="/collection">المجموعة كاملة</Link>
+              <Link href={href("/collection")}>المجموعة كاملة</Link>
             </Button>
           </div>
 
@@ -264,7 +267,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {getBeautyProducts().map((product) => (
-              <ProductCard key={product.sku} product={product} />
+              <ProductCard key={product.sku} product={product} lang={lang} />
             ))}
           </div>
         </div>
@@ -283,13 +286,13 @@ export default function HomePage() {
               </p>
             </div>
             <Button variant="outline" asChild>
-              <Link href="/collection">عرض كل المنتجات</Link>
+              <Link href={href("/collection")}>عرض كل المنتجات</Link>
             </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {getCareProducts().slice(0, 6).map((product) => (
-              <ProductCard key={product.sku} product={product} />
+            {getCareProducts().map((product) => (
+              <ProductCard key={product.sku} product={product} lang={lang} />
             ))}
           </div>
         </div>
@@ -436,7 +439,7 @@ export default function HomePage() {
           </p>
           <div className="mt-8">
             <Button size="xl" variant="secondary" className="font-bold text-brand" asChild>
-              <Link href="/collection">تسوّق الآن</Link>
+              <Link href={href("/collection")}>تسوّق الآن</Link>
             </Button>
           </div>
           <p className="mt-6 text-sm text-white/70">
@@ -458,7 +461,7 @@ export default function HomePage() {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 animate-in slide-in-from-bottom duration-500">
         <div className="max-w-6xl mx-auto flex items-center justify-center">
           <Link 
-            href="/collection" 
+            href={href("/collection")} 
             className="w-full sm:w-80 flex items-center justify-center bg-brand text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-lg hover:bg-brand-700 transition-colors"
           >
             تسوّق الآن

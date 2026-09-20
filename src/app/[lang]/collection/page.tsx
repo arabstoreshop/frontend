@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   description: "نسيم للجمال: سكالب، بارير، ريغارد — سيروم وكريم وباتش + جامي حلال. والدفع عند الاستلام فالمغرب.",
 };
 
-export default function CollectionPage() {
+export default function CollectionPage({ params }: { params: { lang: string } }) {
+  const lang = params.lang === "en" ? "en" : "ar";
   const beauty = getBeautyProducts();
   const care = getCareProducts();
   return (
@@ -23,14 +24,14 @@ export default function CollectionPage() {
       <p className="mb-6 text-sm text-gray-500">199 / 279 / 388 د.م. · الدفع عند الاستلام</p>
       <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {beauty.map((product) => (
-          <ProductCard key={product.sku} product={product} />
+          <ProductCard key={product.sku} product={product} lang={lang} />
         ))}
       </div>
 
       <h2 className="mb-4 mt-14 text-xl font-extrabold text-gray-950">العناية الحساسة</h2>
       <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {care.map((product) => (
-          <ProductCard key={product.sku} product={product} />
+          <ProductCard key={product.sku} product={product} lang={lang} />
         ))}
       </div>
     </div>

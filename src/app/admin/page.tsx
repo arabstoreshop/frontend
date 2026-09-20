@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { isAdminUnlocked, lockAdmin, unlockAdmin } from "@/lib/admin-auth";
 import { MARKETS, marketById, type Category, type MarketId } from "@/lib/cod-markets";
 import { runCalc } from "@/lib/profit-math";
 
@@ -17,14 +18,15 @@ type Aov = {
   source: string;
 };
 
-function money(n: number, ccy = "USD") {
+function money(n: number) {
   const abs = Math.abs(n);
   const formatted = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const sign = n < 0 ? "-" : "";
-  if (ccy === "USD") return `${sign}$${formatted}`;
-  if (ccy === "MAD") return `${sign}${formatted} DH`;
-  if (ccy === "SAR") return `${sign}${formatted} SAR`;
-  return `${sign}${formatted}`;
+  return `${sign}$${formatted}`;
+}
+
+function usd(n: number) {
+  return Math.round(n * 100) / 100;
 }
 
 function Field({
@@ -51,9 +53,12 @@ function Field({
 }
 
 export default function AdminPage() {
+  const [authed, setAuthed] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [tab, setTab] = useState<"calculator" | "aov">("calculator");
   const [section, setSection] = useState<"breakeven" | "scale">("breakeven");
-  const [aovSar, setAovSar] = useState(199);
   const [aov, setAov] = useState<Aov | null>(null);
   const [marketId, setMarketId] = useState<MarketId>("KSA");
   const [category, setCategory] = useState<Category>("cosmetic");
@@ -78,6 +83,12 @@ export default function AdminPage() {
   const market = marketById(marketId);
 
   useEffect(() => {
+    setAuthed(isAdminUnlocked());
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!authed) return;
     const stored = sessionStorage.getItem(KEY_STORE) || "";
     fetch(`${API}/admin/aov`, { headers: stored ? { "X-Admin-Key": stored } : {} })
       .then((r) => (r.ok ? r.json() : null))
@@ -86,53 +97,91 @@ export default function AdminPage() {
         setAov(data);
         if (!manualAov) {
           setAovUsd(data.aov_usd);
-          setAovSar(data.aov_sar);
           setAvgPieces(data.avg_pieces);
         }
       })
       .catch(() => undefined);
-  }, []);
+  }, [authed]);
 
   useEffect(() => {
     const cc = market.callCenter[category];
-    setFeeLead(cc.lead);
-    setFeeConfirmed(cc.confirmed);
-    setFeeDeliveredCc(cc.delivered);
-    setFeeReturn(market.shippingWithCc.returned);
-    setFeeFulfill(market.fulfillment);
+    const rate = market.toUsd;
+    setFeeLead(usd(cc.lead * rate));
+    setFeeConfirmed(usd(cc.confirmed * rate));
+    setFeeDeliveredCc(usd(cc.delivered * rate));
+    setFeeReturn(usd(market.shippingWithCc.returned * rate));
+    setFeeFulfill(usd(market.fulfillment * rate));
     setCodFeePct(market.codFeePct);
     if (market.zones) {
       const z = market.zones.find((x) => x.id === zone) || market.zones[market.zones.length - 1];
-      setFeeShipDelivered(z.shipping);
+      setFeeShipDelivered(usd(z.shipping * rate));
     } else {
-      setFeeShipDelivered(market.shippingWithCc.delivered);
+      setFeeShipDelivered(usd(market.shippingWithCc.delivered * rate));
     }
   }, [market, category, zone]);
 
-  const toUsd = market.toUsd;
   const input = useMemo(() => ({
     leads,
-    cpl: market.currency === "MAD" ? cpl : cpl,
+    cpl,
     confRate,
     delRate,
     aovUsd,
     avgPieces,
     productCost,
-    feeLead: feeLead * toUsd,
-    feeConfirmed: feeConfirmed * toUsd,
-    feeDeliveredCc: feeDeliveredCc * toUsd,
+    feeLead,
+    feeConfirmed,
+    feeDeliveredCc,
     deliveredReplacesConfirm: Boolean(market.deliveredReplacesConfirm),
-    feeReturn: feeReturn * toUsd,
-    feeFulfill: feeFulfill * toUsd,
-    feeShipDelivered: feeShipDelivered * toUsd,
+    feeReturn,
+    feeFulfill,
+    feeShipDelivered,
     codFeePct,
-  }), [leads, cpl, confRate, delRate, aovUsd, avgPieces, productCost, feeLead, feeConfirmed, feeDeliveredCc, feeReturn, feeFulfill, feeShipDelivered, codFeePct, toUsd, market.deliveredReplacesConfirm, market.currency]);
+  }), [leads, cpl, confRate, delRate, aovUsd, avgPieces, productCost, feeLead, feeConfirmed, feeDeliveredCc, feeReturn, feeFulfill, feeShipDelivered, codFeePct, market.deliveredReplacesConfirm]);
 
   const result = useMemo(() => runCalc(input), [input]);
   const be = useMemo(() => runCalc({ ...input, cpl: Math.max(0, result.maxCpl) }), [input, result.maxCpl]);
 
-  const ccy = market.currency;
-  const unit = ccy === "MAD" ? "DH" : "$";
+  if (!ready) {
+    return <div className="min-h-screen bg-[#0f1412]" />;
+  }
+
+  if (!authed) {
+    return (
+      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3d8f6b]">Naseem admin</p>
+        <h1 className="mt-2 text-3xl font-black">Login</h1>
+        <p className="mt-2 text-sm text-[#9cb3a8]">هاد الحساب خاصو كلمة السر. ماشي مفتوح للعموم.</p>
+        <form
+          className="mt-6 space-y-4"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const ok = await unlockAdmin(password);
+            if (!ok) {
+              setError("كلمة السر غالطة.");
+              return;
+            }
+            setError("");
+            setAuthed(true);
+          }}
+        >
+          <label className="block">
+            <span className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-[#9cb3a8]">Password</span>
+            <input
+              type="password"
+              autoFocus
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-[#2a3a34] bg-[#161d1a] px-3 py-3 text-[15px] font-semibold outline-none focus:border-[#3d8f6b]"
+            />
+          </label>
+          {error ? <p className="text-sm text-red-300">{error}</p> : null}
+          <button type="submit" className="w-full rounded-full bg-[#3d8f6b] px-4 py-3 text-sm font-bold text-white">
+            دخول
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 pb-16">
@@ -144,19 +193,29 @@ export default function AdminPage() {
         <div className="flex gap-2">
           <button onClick={() => setTab("calculator")} className={`rounded-full px-4 py-2 text-sm font-bold ${tab === "calculator" ? "bg-[#3d8f6b] text-white" : "bg-[#1b2521] text-[#9cb3a8]"}`}>Profit calculator</button>
           <button onClick={() => setTab("aov")} className={`rounded-full px-4 py-2 text-sm font-bold ${tab === "aov" ? "bg-[#3d8f6b] text-white" : "bg-[#1b2521] text-[#9cb3a8]"}`}>Lifetime AOV</button>
+          <button
+            onClick={() => {
+              lockAdmin();
+              setAuthed(false);
+              setPassword("");
+            }}
+            className="rounded-full bg-[#1b2521] px-4 py-2 text-sm font-bold text-[#9cb3a8]"
+          >
+            خروج
+          </button>
         </div>
       </header>
 
       <div className="mb-5 grid gap-3 sm:grid-cols-4">
-        <Stat label="Lifetime AOV" value={aov ? money(aov.aov_sar, "SAR") : money(aovSar, "SAR")} sub={`${money(aovUsd)} · 3.75 SAR/$`} />
+        <Stat label="Lifetime AOV" value={aov ? money(aov.aov_usd) : money(aovUsd)} sub="USD" />
         <Stat label="Avg pieces / order" value={aov ? String(aov.avg_pieces) : String(avgPieces)} sub="units in the AOV basket" />
         <Stat label="Orders" value={aov ? String(aov.order_count) : "manual"} sub={aov?.source === "orders" ? "live database" : "type AOV below"} />
-        <Stat label="Revenue" value={aov ? money(aov.revenue_sar, "SAR") : "—"} sub="lifetime" />
+        <Stat label="Revenue" value={aov ? money(aov.revenue_sar / (aov.sar_per_usd || 3.75)) : "—"} sub="lifetime USD" />
       </div>
 
       {tab === "aov" ? (
         <div className="rounded-2xl border border-[#2a3a34] bg-[#161d1a] p-6 text-sm leading-7 text-[#c5d5cc]">
-          AOV is converted to USD at {aov?.sar_per_usd || 3.75} SAR. Average pieces is total item quantity ÷ orders — that is the basket that created this AOV. Override both in the calculator if you want to model a different offer.
+          All numbers are USD. Average pieces is total item quantity ÷ orders — that is the basket that created this AOV. Override both in the calculator if you want to model a different offer.
         </div>
       ) : (
         <>
@@ -173,7 +232,7 @@ export default function AdminPage() {
           </div>
 
           <p className="mb-4 text-sm text-[#9cb3a8]">
-            Fees prefills from <b className="text-[#e8efe9]">{market.provider}</b> · {market.name}. Everything is editable. P&L is in USD{ccy === "MAD" ? " (MAD ÷ 10)" : ""}.
+            Fees prefills from <b className="text-[#e8efe9]">{market.provider}</b> · {market.name}. Everything is in USD and editable.
           </p>
 
           <div className="mb-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
@@ -185,21 +244,10 @@ export default function AdminPage() {
                   <Field label="Confirmation rate" value={Math.round(confRate * 1000) / 10} onChange={(v) => setConfRate(v / 100)} suffix="%" />
                   <Field label="Delivery rate" value={Math.round(delRate * 1000) / 10} onChange={(v) => setDelRate(v / 100)} suffix="%" hint="of confirmed orders" />
                   <Field
-                    label="AOV (SAR)"
-                    value={aovSar}
-                    onChange={(v) => {
-                      setManualAov(true);
-                      setAovSar(v);
-                      setAovUsd(Math.round((v / 3.75) * 100) / 100);
-                    }}
-                    suffix="SAR"
-                  />
-                  <Field
-                    label="AOV (USD)"
+                    label="AOV"
                     value={aovUsd}
                     onChange={(v) => { setManualAov(true); setAovUsd(v); }}
                     suffix="$"
-                    hint="SAR ÷ 3.75"
                   />
                   <Field
                     label="Avg pieces / order"
@@ -219,7 +267,7 @@ export default function AdminPage() {
                 </div>
               </Box>
 
-              <Box title={`Unit fees (${unit})`}>
+              <Box title="Unit fees ($)">
                 {market.zones ? (
                   <label className="mb-3 block">
                     <span className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-[#9cb3a8]">Digylog city zone</span>
@@ -229,18 +277,18 @@ export default function AdminPage() {
                       className="w-full rounded-xl border border-[#2a3a34] bg-[#161d1a] px-3 py-2 text-sm font-semibold"
                     >
                       {market.zones.map((z) => (
-                        <option key={z.id} value={z.id}>{z.label} — {z.shipping} DH</option>
+                        <option key={z.id} value={z.id}>{z.label} — ${usd(z.shipping * market.toUsd).toFixed(2)}</option>
                       ))}
                     </select>
                   </label>
                 ) : null}
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <Field label="Per lead (call center)" value={feeLead} onChange={setFeeLead} suffix={unit} />
-                  <Field label="Per confirmed lead" value={feeConfirmed} onChange={setFeeConfirmed} suffix={unit} hint={market.deliveredReplacesConfirm ? "Digylog: 6 DH if not delivered" : "COD Network confirmation"} />
-                  <Field label="Per delivered order" value={feeDeliveredCc} onChange={setFeeDeliveredCc} suffix={unit} hint={market.deliveredReplacesConfirm ? "Digylog: becomes 10 DH if delivered" : "extra CC fee on delivery"} />
-                  <Field label="Per return" value={feeReturn} onChange={setFeeReturn} suffix={unit} />
-                  <Field label="Per fulfilled (left warehouse)" value={feeFulfill} onChange={setFeeFulfill} suffix={unit} />
-                  <Field label="Shipping delivered" value={feeShipDelivered} onChange={setFeeShipDelivered} suffix={unit} />
+                  <Field label="Per lead (call center)" value={feeLead} onChange={setFeeLead} suffix="$" />
+                  <Field label="Per confirmed lead" value={feeConfirmed} onChange={setFeeConfirmed} suffix="$" hint={market.deliveredReplacesConfirm ? "Digylog: $0.60 if not delivered" : "COD Network confirmation"} />
+                  <Field label="Per delivered order" value={feeDeliveredCc} onChange={setFeeDeliveredCc} suffix="$" hint={market.deliveredReplacesConfirm ? "Digylog: $1.00 if delivered" : "extra CC fee on delivery"} />
+                  <Field label="Per return" value={feeReturn} onChange={setFeeReturn} suffix="$" />
+                  <Field label="Per fulfilled (left warehouse)" value={feeFulfill} onChange={setFeeFulfill} suffix="$" />
+                  <Field label="Shipping delivered" value={feeShipDelivered} onChange={setFeeShipDelivered} suffix="$" />
                   <Field label="COD fee" value={Math.round(codFeePct * 1000) / 10} onChange={(v) => setCodFeePct(v / 100)} suffix="%" />
                 </div>
               </Box>

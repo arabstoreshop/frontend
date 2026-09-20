@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { BEAUTY_BUNDLE_PRICES, BUNDLE_PRICES, getProductBySku, UPSELL_PRICE } from "@/lib/products";
+import { BEAUTY_BUNDLE_PRICES, BUNDLE_PRICES, catalogLine, UPSELL_PRICE } from "@/lib/products";
 import type { CartItem } from "@/types";
 
 interface CartState {
@@ -33,18 +33,18 @@ export const useCartStore = create<CartState>()(
 
       addItem: (newItem) => {
         set((state) => {
-          const existing = state.items.find(
-            (i) => i.sku === newItem.sku && i.isUpsell === newItem.isUpsell
+          const incomingLine = catalogLine(newItem.sku);
+          const qty = ([1, 2, 3].includes(newItem.quantity) ? newItem.quantity : 1) as 1 | 2 | 3;
+          const withoutOtherLine = state.items.filter(
+            (i) => i.isUpsell || catalogLine(i.sku) === incomingLine
           );
-          if (existing) {
-            return state;
-          }
-          return { items: [...state.items, { ...newItem, bundlePrice: 0 }] };
+          const rest = withoutOtherLine.filter(
+            (i) => !(i.sku === newItem.sku && i.isUpsell === newItem.isUpsell)
+          );
+          return {
+            items: recomputePrices([...rest, { ...newItem, quantity: qty, bundlePrice: 0 }]),
+          };
         });
-        // Recompute bundle prices
-        set((state) => ({
-          items: recomputePrices(state.items),
-        }));
       },
 
       removeItem: (sku) => {
@@ -70,6 +70,14 @@ export const useCartStore = create<CartState>()(
     {
       name: "naseem-cart",
       partialize: (state) => ({ items: state.items }),
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<CartState> | undefined;
+        return {
+          ...current,
+          ...saved,
+          items: recomputePrices(saved?.items ?? []),
+        };
+      },
     }
   )
 );
@@ -78,17 +86,10 @@ function recomputePrices(items: CartItem[]): CartItem[] {
   const mainItems = items.filter((i) => !i.isUpsell);
   const upsellItems = items.filter((i) => i.isUpsell);
 
-  const mainQty = mainItems.reduce((s, i) => s + i.quantity, 0);
-  const isBeauty = mainItems.some((i) => getProductBySku(i.sku)?.line === "beauty");
-  const table = isBeauty ? BEAUTY_BUNDLE_PRICES : BUNDLE_PRICES;
-  const bundlePrice = table[mainQty] ?? (isBeauty ? 199 : 129);
-
-  // Assign bundle price to first main item, 0 to rest
-  let remaining = bundlePrice;
-  const pricedMain = mainItems.map((item, idx) => {
-    const price = idx === 0 ? remaining : 0;
-    remaining = 0;
-    return { ...item, bundlePrice: price };
+  const pricedMain = mainItems.map((item) => {
+    const qty = [1, 2, 3].includes(item.quantity) ? item.quantity : 1;
+    const table = catalogLine(item.sku) === "beauty" ? BEAUTY_BUNDLE_PRICES : BUNDLE_PRICES;
+    return { ...item, quantity: qty, bundlePrice: table[qty] ?? 199 };
   });
 
   const pricedUpsell = upsellItems.map((item) => ({

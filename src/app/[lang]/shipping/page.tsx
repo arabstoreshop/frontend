@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "الشحن والتوصيل | نسيم",
 };
 
-export default function ShippingPage() {
+export default function ShippingPage({ params }: { params: { lang: string } }) {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
       <h1 className="text-3xl font-bold text-gray-900 mb-3">الشحن والتوصيل</h1>
@@ -72,7 +72,7 @@ export default function ShippingPage() {
           <h2 className="text-xl font-bold text-gray-900 mb-3">تتبع الطلب</h2>
           <p>
             يمكنك تتبع حالة طلبك باستخدام رقم الطلب في{" "}
-            <a href="/track" className="text-brand underline">صفحة التتبع</a>
+            <a href={`/${params.lang}/track`} className="text-brand underline">صفحة التتبع</a>
             {" "}أو بالتواصل مع فريقنا.
           </p>
         </section>

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "إجابات على أكثر الأسئلة شيوعاً حول منتجات نسيم وطلبك",
 };
 
-export default function FaqPage() {
+export default function FaqPage({ params }: { params: { lang: string } }) {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-14">
       <div className="text-center mb-12">
@@ -20,7 +20,7 @@ export default function FaqPage() {
       <div className="mt-10 p-5 bg-cream rounded-2xl text-center">
         <p className="text-sm text-gray-600 mb-3">لم تجد إجابتك؟</p>
         <a
-          href="/contact"
+          href={`/${params.lang}/contact`}
           className="inline-flex items-center text-brand font-medium text-sm hover:underline"
         >
           تواصل مع فريقنا ←

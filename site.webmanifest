@@ -4,13 +4,18 @@
   "description": "عناية حساسة. 199 / 279 / 349 ريال. الدفع عند الاستلام في السعودية.",
   "start_url": "/ar/",
   "display": "standalone",
-  "background_color": "#FAF8F3",
-  "theme_color": "#3F6B5A",
+  "background_color": "#4D6F5E",
+  "theme_color": "#4D6F5E",
   "lang": "ar",
   "dir": "rtl",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

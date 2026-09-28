@@ -29,9 +29,12 @@ const arabicLayoutMetadata: Metadata = {
   ],
   metadataBase: new URL("https://naseem.beauty"),
   icons: {
-    icon: [{ url: "/favicon.png", type: "image/png" }],
-    apple: [{ url: "/favicon.png", type: "image/png" }],
-    shortcut: ["/favicon.png"],
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.png", type: "image/png", sizes: "48x48" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+    shortcut: ["/favicon.ico"],
   },
   manifest: "/site.webmanifest",
   openGraph: {

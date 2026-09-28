@@ -2,6 +2,8 @@ User-Agent: *
 Allow: /
 Disallow: /admin
 Disallow: /profit
+Disallow: /en
+Disallow: /en/
 
 Host: https://naseem.beauty
 Sitemap: https://naseem.beauty/sitemap.xml
